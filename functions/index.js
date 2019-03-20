@@ -26,13 +26,13 @@ exports.addArticle = functions.https.onRequest((req, res) => {
                 text: text
             }).then(function(snapshot) {
 
-                var id = snapshot.id;
+                var key = snapshot.key;
                 
-                admin.database().ref(`/articles/${id}`).on('value', (snapshot) => {
+                admin.database().ref(`/articles/${key}`).on('value', (snapshot) => {
                    
                     if(snapshot.val()) {
                         res.status(200).send({
-                            [id]: snapshot.val()
+                            [key]: snapshot.val()
                         });
                     }
                     else {
@@ -55,17 +55,17 @@ exports.getArticles = functions.https.onRequest((req, res) => {
     
     if(req.method === 'GET') {
         
-        return database.orderByChild('id').on('value', (snapshot) => {
+        return database.orderByChild('key').on('value', (snapshot) => {
             
             if(snapshot.val()) {
 
                 var articles = [];
                 
                 snapshot.forEach(function(childSnapshot) {
-                    var id = childSnapshot.id;
+                    var key = childSnapshot.key;
 
                     articles.push({
-                        [id]: childSnapshot
+                        [key]: childSnapshot
                     })
                     
                 });
@@ -85,10 +85,10 @@ exports.deleteArticle = functions.https.onRequest((req, res) => {
 
     if(req.method === 'DELETE') {
         
-        var id = req.query.id
+        var key = req.query.key
 
-        if(id) {
-            return admin.database().ref(`/articles/${id}`).remove()
+        if(key) {
+            return admin.database().ref(`/articles/${key}`).remove()
         }
         else {
             res.status(400).send('No matches for id');
@@ -103,15 +103,16 @@ exports.getArticleId = functions.https.onRequest((req, res) => {
     
     if(req.method === 'GET') {
         
-        var id = req.query.id;
+        var key = req.query.key;
         
-        if(id) {
+        if(key) {
             
-            return database.child(id).on('value', (snapshot) => {
+            return database.child(key).on('value', (snapshot) => {
+                
                 if(snapshot.val()) {
                     
                     res.status(200).send({
-                        [id]: snapshot.val()
+                        [key]: snapshot.val()
                     });
                 }
                 else {
@@ -132,22 +133,27 @@ exports.getArticleCategory = functions.https.onRequest((req, res) => {
 
     if(req.method === 'GET') {
         
-        let articles = [];
         var category = req.query.category;
 
         if(category) {
 
             return database.orderByChild('category').equalTo(category).on('value', (snapshot) => {
-            
-                snapshot.forEach(function(childSnapshot) {
+
+                if(snapshot.val()) {
+
+                    var articles = [];
+
+                    snapshot.forEach(function(childSnapshot) {
     
-                    var id = childSnapshot.id;
-                    
-                    articles.push({
-                        [id]: childSnapshot
+                        var key = childSnapshot.key;
+                        
+                        articles.push({
+                            [key]: childSnapshot
+                        });
                     });
-                });
-                res.status(200).send(articles);
+                    res.status(200).send(articles);
+
+                }
             })
         }
         else {
@@ -163,25 +169,25 @@ exports.updateArticle = functions.https.onRequest((req, res) => {
     
     if(req.method === 'PUT') {
         
-        var id = req.query.id;
+        var key = req.query.key;
 
-        if(id) {
+        if(key) {
 
             var text = req.body.text;
             
             if(text) {
             
-                return admin.database().ref(`/articles/${id}`).on('value', (snapshot) => {
+                return admin.database().ref(`/articles/${key}`).on('value', (snapshot) => {
                     if(snapshot.val()) {
                         snapshot.ref.update({
                             "text": text
                         });
 
-                        return admin.database().ref(`/articles/${id}`).on('value', (snapshot) => {
+                        return admin.database().ref(`/articles/${key}`).on('value', (snapshot) => {
                             if(snapshot.val()) {
-                                var id = snapshot.id;
+                                var key = snapshot.key;
                                 res.status(200).send({
-                                    [id]: snapshot.val()
+                                    [key]: snapshot.val()
                                 });
                             }
                         })
