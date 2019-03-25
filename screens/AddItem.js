@@ -12,13 +12,14 @@ export default class AddItem extends Component {
         <View>
           <Text style={styles.title}>Adding new article</Text>
           <Text style={styles.heading}>Title</Text> 
-          <TextInput style={styles.itemInput}/>
+          <TextInput style={styles.input}/>
           <Text style={styles.heading}>Image</Text> 
-          <TextInput style={styles.itemInput}/>
+          <TextInput style={styles.input}/>
           <Text style={styles.heading}>Text</Text> 
-          <TextInput style={styles.itemInput}/>
+          <TextInput style={styles.inputText}
+          multiline = {true} />
           <TouchableHighlight
-            style={styles.button}
+            style={styles.buttonContainer}
             underlayColor="grey"
             //onPress={this.handleSubmit}
           >
@@ -29,47 +30,50 @@ export default class AddItem extends Component {
     }
   }
 
-  const styles = StyleSheet.create({  
-
+  const styles = StyleSheet.create({
     title: {
       margin: 50,
-      fontSize: 23,
-      textAlign: 'center'
+      fontSize: 20,
+      textAlign: 'center',
+      color: 'grey',
+      fontWeight: '700'
     },
     heading: {
         marginBottom: 10,
-        fontSize: 18,
-        textAlign: 'center'
+        marginLeft: 30,
+        color: 'grey',
+        fontWeight: '700'
       },
-    itemInput: {
-      height: 50,
-      padding: 4,
-      marginLeft: 50,
-      marginRight: 50,
-      marginBottom: 10,
-      fontSize: 18,
-      borderWidth: 1,
-      borderColor: 'black',
-      borderRadius: 8,
-      color: 'black'
+    container: {
+     paddingTop: 200
     },
-    buttonText: {
-      fontSize: 18,
-      color: '#111',
-      alignSelf: 'center'
+    input:{
+        marginLeft: 30,
+        marginRight: 30,
+        height: 40,
+        backgroundColor: 'rgba(225,225,225,0.2)',
+        marginBottom: 10,
+        padding: 10,
+        color: 'grey'
     },
-    button: {
-      height: 45,
-      flexDirection: 'row',
-      backgroundColor: 'grey',
-      borderColor: 'black',
-      borderWidth: 1,
-      marginLeft: 50,
-      marginRight: 50,
-      borderRadius: 8,
+    inputText:{
+      marginLeft: 30,
+      marginRight: 30,
+      height: 120,
+      backgroundColor: 'rgba(225,225,225,0.2)',
       marginBottom: 10,
-      marginTop: 20,
-      alignSelf: 'stretch',
-      justifyContent: 'center'
+      padding: 10,
+      color: 'grey'
+  },
+    buttonContainer:{
+        marginLeft: 30,
+        marginRight: 30,
+        backgroundColor: 'grey',
+        paddingVertical: 15
+    },
+    buttonText:{
+        color: '#fff',
+        textAlign: 'center',
+        fontWeight: '700'
     }
-  });
+});

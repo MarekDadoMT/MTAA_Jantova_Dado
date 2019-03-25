@@ -8,6 +8,8 @@ import Home from './screens/Home';
 import AddItem from './screens/AddItem';  
 import List from './screens/List';
 import Login from './screens/Login';
+import { Http2ServerRequest } from 'http2';
+//import console = require('console');
 
 const AppNavigator = createStackNavigator(  
     {
@@ -32,7 +34,7 @@ export default class App extends React.Component {
         }
     }*/
 
-    /*componentWillMount() {
+    componentWillMount() {
         var config = {
             apiKey: "AIzaSyBEHe75cZir7nmNtpQzTk4Sf6YduYvxi-k",
             authDomain: "mtaa-f5627.firebaseapp.com",
@@ -44,7 +46,39 @@ export default class App extends React.Component {
         firebase.initializeApp(config);
 
         //const myf = firebase.functions().httpsCallable('getArticles')
-    }*/
+        var functions = firebase.functions();
+        //var addArticle = functions.httpsCallable('addArticle');
+        /*addArticle({author: "author",
+            category: "category",
+            title: "title",
+            image: "image",
+            text: "text"}).then(function(result) {
+                // Read result of the Cloud Function.
+                var sanitizedMessage = result.text;
+               // console.log(sanitizedMessage);
+                // ...
+              }).catch(function(error) {
+                // Getting the Error details.
+                var code = error.code;
+                var message = error.message;
+                var details = error.details;
+                // [START_EXCLUDE]
+                //console.error('There was an error when calling the Cloud Function', error);
+                window.alert('There was an error when calling the Cloud Function:\n\nError Code: '
+                    + code + '\nError Message:' + message + '\nError Details:' + details);
+                //addMessageButton.disabled = false;
+                // [END_EXCLUDE]
+                // [END_EXCLUDE]
+              });*/
+             /* const express = require('express');
+              const cors = require('cors');
+              
+              const app = express();
+              app.post('https://us-central1-mtaa-f5627.cloudfunctions.net/addArticle', );*/
+
+              
+
+    }
 
     render() {
 
