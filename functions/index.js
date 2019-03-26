@@ -6,134 +6,184 @@ admin.initializeApp();
 
 const database = admin.database().ref('/articles');
 
-
-const getArticlesFromDatabase = (res) => {
-    let articles = [];
-
-    return database.on('value', (snapshot) => {
-        snapshot.forEach((article) => {
-            articles.push({
-                id: article.key,
-                author: article.val().author,
-                category: article.val().category,
-                title: article.val().title,
-                text: article.val().text
-            });
-        });
-        res.status(200).json(articles);
-    }, (error) => {
-        res.status(error.code).json({
-            message: `Something went wrong. ${error.message}`
-        })
-    })
-};
 exports.addArticle = functions.https.onRequest((req, res) => {
-    return cors(req, res, () => {
-        if(req.method !== 'POST') {
-            return res.status(401).json({
-                message: 'Not allowed'
-            })
-        };
+
+    if(req.method === 'POST') {
 
         var author = req.body.author;
         var category = req.body.category;
         var title = req.body.title;
+        var image = req.body.image;
         var text = req.body.text;
 
-        database.push({ 
-            author: author,
-            category: category,
-            title: title,
-            text: text
-        });
-        getArticlesFromDatabase(res)
-    });
+        if(author && category && title && image && text) {
+
+            database.push({ 
+                author: author,
+                category: category,
+                title: title,
+                image: image,
+                text: text
+            }).then(function(snapshot) {
+
+                var key = snapshot.key;
+                
+                admin.database().ref(`/articles/${key}`).on('value', (snapshot) => {
+                   
+                    if(snapshot.val()) {
+                        res.status(200).send({
+                            [key]: snapshot.val()
+                        });
+                    }
+                    else {
+                        res.status(404).send();
+                    }
+                })
+
+            });
+        }
+        else {
+            res.status(400).send('Missing parameter');
+        }
+    }
+    else {
+        res.status(400).send();
+    }
 });
 
 exports.getArticles = functions.https.onRequest((req, res) => {
-    return cors(req, res, () => {
-        if(req.method !== 'GET') {
-            return res.status(401).json({
-                message: 'Not allowed'
-            });
-        };
-        getArticlesFromDatabase(res)
-    });
+    
+    if(req.method === 'GET') {
+        
+        return database.orderByChild('key').on('value', (snapshot) => {
+            
+            if(snapshot.val()) {
+
+                var articles = [];
+                
+                snapshot.forEach(function(childSnapshot) {
+                    var key = childSnapshot.key;
+
+                    articles.push({
+                        [key]: childSnapshot
+                    })
+                    
+                });
+                res.status(200).send(articles);
+            }
+            else {
+                res.status(404).send();
+            }            
+        })
+    }
+    else {
+        res.status(400).send();
+    }
 });
 
 exports.deleteArticle = functions.https.onRequest((req, res) => {
-    return cors(req, res, () => {
-        if(req.method !== 'DELETE') {
-            return res.status(401).json({
-                message: 'Not allowed'
-            })
+
+    if(req.method === 'DELETE') {
+        
+        var key = req.query.key
+
+        if(key) {
+            return admin.database().ref(`/articles/${key}`).remove()
         }
-        const id = req.body.id
-        admin.database().ref(`/articles/${id}`).remove()
-        getArticlesFromDatabase(res)
-    })
-})
+        else {
+            res.status(400).send('No matches for id');
+        }
+    }
+    else {
+        res.status(400).send();
+    }
+});
 
 exports.getArticleId = functions.https.onRequest((req, res) => {
     
     if(req.method === 'GET') {
         
-        var key = req.query.key
+        var key = req.query.key;
         
         if(key) {
             
             return database.child(key).on('value', (snapshot) => {
+                
                 if(snapshot.val()) {
+                    
                     res.status(200).send({
                         [key]: snapshot.val()
                     });
                 }
+                else {
+                    res.status(404).send();
+                }
             })
         }
+        else {
+            res.status(400).send('No matches for id');
+        }
+    }
+    else {
+        res.status(400).send();
     }
 });
 
 exports.getArticleCategory = functions.https.onRequest((req, res) => {
-    let articles = [];
-    var category = req.query.category;
 
-    return database.orderByChild('category').equalTo(category).on('value', (snapshot) => {
+    if(req.method === 'GET') {
         
-        snapshot.forEach(function(childSnapshot) {
+        var category = req.query.category;
 
-            var key = childSnapshot.key;
-            
-            articles.push({
-                [key]: childSnapshot
-            });
-        });
-        res.status(200).send(articles);
-    }, (error) => {
-        res.status(error.code).json({
-            message: `Something went wrong. ${error.message}`
-        })
-    })
+        if(category) {
+
+            return database.orderByChild('category').equalTo(category).on('value', (snapshot) => {
+
+                if(snapshot.val()) {
+
+                    var articles = [];
+
+                    snapshot.forEach(function(childSnapshot) {
+    
+                        var key = childSnapshot.key;
+                        
+                        articles.push({
+                            [key]: childSnapshot
+                        });
+                    });
+                    res.status(200).send(articles);
+
+                }
+            })
+        }
+        else {
+            res.status(400).send('Missing category');
+        }
+    }
+    else {
+        res.status(400).send();
+    }
 });
 
 exports.updateArticle = functions.https.onRequest((req, res) => {
     
     if(req.method === 'PUT') {
         
-        var id = req.query.id;
+        var key = req.query.key;
 
-        if(id) {
+        if(key) {
 
             var text = req.body.text;
             
             if(text) {
             
-                return admin.database().ref(`/articles/${id}`).on('value', (snapshot) => {
+                return admin.database().ref(`/articles/${key}`).on('value', (snapshot) => {
                     if(snapshot.val()) {
                         snapshot.ref.update({
                             "text": text
                         });
 
-                        return admin.database().ref(`/articles/${id}`).on('value', (snapshot) => {
+                        return admin.database().ref(`/articles/${key}`).on('value', (snapshot) => {
                             if(snapshot.val()) {
                                 var key = snapshot.key;
                                 res.status(200).send({
@@ -144,6 +194,15 @@ exports.updateArticle = functions.https.onRequest((req, res) => {
                     }
                 })
             }
+            else {
+                res.status(400).send('Missing text');
+            }
         }
+        else {
+            res.status(400).send('No matches for id');
+        }
+    }
+    else {
+        res.status(400).send();
     }
 });
