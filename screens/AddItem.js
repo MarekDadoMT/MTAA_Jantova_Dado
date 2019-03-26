@@ -6,7 +6,7 @@ import getPermission from '../utils/permissions'
 export default class AddItem extends Component {  
 
     constructor(props) {
-      super(props)
+      super(props);
       this.state = {
         author: '',
         category: '',
@@ -39,13 +39,11 @@ export default class AddItem extends Component {
     };
 
     _onPress = () => {
-      //console.log(this.state.title);
-      //sconsole.log(this.state.image);
         var obj = { author: "weWANTtoPass", category: this.state.category, image: this.state.image,  text: this.state.textovePole, title: this.state.title};
         var myJSON = JSON.stringify(obj);
-        console.log(myJSON);
+        //console.log(myJSON);
 
-        fetch(
+        return fetch(
             'https://us-central1-mtaa-f5627.cloudfunctions.net/addArticle', {
                 method: 'POST',
                 headers: {
@@ -53,7 +51,15 @@ export default class AddItem extends Component {
                     'Content-Type': 'application/json',
                 },
                 body: myJSON
-            });
+        }).then((response) => {
+            if(response.status !== 200) {
+                Alert.alert("Záznam sa nepridal do databázy!", "Nezadal si všetky parametre");
+            }
+
+            else {
+                Alert.alert("ZO SRDIEČKA GRATULUJEM", "Záznam bol pridaný")
+            }
+        });
 
 
 
@@ -148,7 +154,7 @@ export default class AddItem extends Component {
         paddingVertical: 15
     },
     buttonText:{
-        color: '#fff',
+        color: '#323232',
         textAlign: 'center',
         fontWeight: '700'
     }
