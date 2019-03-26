@@ -1,6 +1,7 @@
 import React, { Component } from 'react';  
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Button, Alert } from 'react-native';
-//mport console = require('console');
+import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, StyleSheet, Button, Alert, Image } from 'react-native';
+import { Permissions, ImagePicker } from 'expo';
+import getPermission from '../utils/permissions'
 
 export default class AddItem extends Component {  
 
@@ -11,20 +12,52 @@ export default class AddItem extends Component {
         category: '',
         image: '',
         text: '',
-        title: '' 
+        title: ''
       }
     }
 
-    _onChangeText = (text) => {
+    state = {
+        image: null
+    };
+
+    /*_onChangeText = (text) => {
       this.setState({text})
-    }
+    }*/
+
+    handleChoosePhoto = async () => {
+        const status = await getPermission(Permissions.CAMERA_ROLL);
+        if (status) {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: false,
+            });
+            if(!result.cancelled) {
+                console.log(result);
+                this.setState({image: result.url});
+            }
+        }
+
+    };
 
     _onPress = () => {
       //console.log(this.state.title);
       //sconsole.log(this.state.image);
-      var obj = { author: "weWANTtoPass", category: this.state.category, image: this.state.image,  text: this.state.textovePole, title: this.state.title};
-      var myJSON = JSON.stringify(obj);
-      console.log(myJSON);
+        var obj = { author: "weWANTtoPass", category: this.state.category, image: this.state.image,  text: this.state.textovePole, title: this.state.title};
+        var myJSON = JSON.stringify(obj);
+        console.log(myJSON);
+
+        fetch(
+            'https://us-central1-mtaa-f5627.cloudfunctions.net/addArticle', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: myJSON
+            });
+
+
+
+
     }
 
     static navigationOptions = {
@@ -33,7 +66,7 @@ export default class AddItem extends Component {
 
     render() {
       return (
-        <View>
+        <KeyboardAvoidingView behavior="position">
           <Text style={styles.title}>Adding new article</Text>
           <Text style={styles.heading}>Title</Text> 
           <TextInput style={styles.input}
@@ -62,7 +95,13 @@ export default class AddItem extends Component {
           >
             <Text style={styles.buttonText}>Add</Text>
           </TouchableOpacity>
-        </View>
+
+            <Button
+                style={styles.buttonContainer}
+                title="Choose photo"
+                onPress={this.handleChoosePhoto}
+            />
+        </KeyboardAvoidingView>
       );
     }
   }
