@@ -1,120 +1,93 @@
 import React, { Component } from 'react';  
-import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, StyleSheet, Button, Alert, Image } from 'react-native';
+import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, StyleSheet, View, Button, Alert, Image } from 'react-native';
 import { Permissions, ImagePicker } from 'expo';
 import getPermission from '../utils/permissions'
 
-export default class AddItem extends Component {  
+import fb from '../firebase';
 
-    constructor(props) {
-      super(props);
-      this.state = {
-        author: '',
-        category: '',
-        image: '',
-        text: '',
-        title: ''
-      }
-    }
-
-    state = {
-        image: null
-    };
-
-    /*_onChangeText = (text) => {
-      this.setState({text})
-    }*/
-
-    handleChoosePhoto = async () => {
-        const status = await getPermission(Permissions.CAMERA_ROLL);
-        if (status) {
-            const result = await ImagePicker.launchImageLibraryAsync({
-                allowsEditing: false,
-            });
-            if(!result.cancelled) {
-                console.log(result);
-                this.setState({image: result.url});
-            }
-        }
-
-    };
-
-    _onPress = () => {
-        var obj = { author: "weWANTtoPass", category: this.state.category, image: this.state.image,  text: this.state.textovePole, title: this.state.title};
-        var myJSON = JSON.stringify(obj);
-        //console.log(myJSON);
-
-        return fetch(
-            'https://us-central1-mtaa-f5627.cloudfunctions.net/addArticle', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: myJSON
-        }).then((response) => {
-            if(response.status !== 200) {
-                Alert.alert("Záznam sa nepridal do databázy!", "Nezadal si všetky parametre");
-            }
-
-            else {
-                Alert.alert("ZO SRDIEČKA GRATULUJEM", "Záznam bol pridaný")
-            }
-        });
-
-
-
-
-    }
-
-    static navigationOptions = {
-        title: 'New article'
-      };
-
-    render() {
-      return (
-        <KeyboardAvoidingView behavior="position">
-          <Text style={styles.title}>Adding new article</Text>
-          <Text style={styles.heading}>Title</Text> 
-          <TextInput style={styles.input}
-                    onChangeText={(text) => this.setState({title: text})}
-                    />
-
-          <Text style={styles.heading}>Category</Text> 
-          <TextInput style={styles.input}
-                    onChangeText={(text) => this.setState({category: text})}
-                    />
-         
-          <Text style={styles.heading}>Image</Text> 
-          <TextInput style={styles.input}
-                    onChangeText={(text) => this.setState({image: text})}
-                    />
-          
-          <Text style={styles.heading}>Text</Text> 
-          <TextInput style={styles.inputText}
-                        multiline = {true} 
-                        onChangeText={(text) => this.setState({textovePole: text})}
-                        />
-          <TouchableOpacity
-            style={styles.buttonContainer}
-            underlayColor="grey"
-            onPress={this._onPress}
-          >
-            <Text style={styles.buttonText}>Add</Text>
-          </TouchableOpacity>
-
-            <Button
-                style={styles.buttonContainer}
-                title="Choose photo"
-                onPress={this.handleChoosePhoto}
-            />
-        </KeyboardAvoidingView>
-      );
+export default class AddItem extends Component { 
+  
+  static navigationOptions = {
+    title: 'New article'
+  };
+  
+  constructor(props) {   
+    super(props);
+    this.state = {
+      author: '',
+      category: '',
+      image: '',
+      text: '',
+      title: ''
     }
   }
 
+  handleChoosePhoto = async () => {
+    const status = await getPermission(Permissions.CAMERA_ROLL);
+    if (status) {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: false,
+      });
+      
+      if(!result.cancelled) {
+        this.setState({image: result.uri});
+      }
+    }
+  };
+
+  _onPress = () => {     
+    fb.instance.uploadImageAsync(this.state.image).then((url) => {
+      fb.instance.addToDatabase(url, this.state)
+    }).catch(error => {
+      console.log('Something is wrong')
+    })
+  }
+
+  render() {
+    return (
+      <KeyboardAvoidingView behavior="position">
+        
+        <Text style={styles.title}>Adding new article</Text>
+        
+        <Text style={styles.heading}>Title</Text> 
+        <TextInput style={styles.input}
+                  onChangeText={(text) => this.setState({title: text})}
+        />
+
+        <Text style={styles.heading}>Category</Text> 
+        <TextInput style={styles.input}
+                  onChangeText={(text) => this.setState({category: text})}
+        />
+        
+        <Text style={styles.heading}>Image</Text> 
+        <TouchableOpacity
+          style={styles.buttonContainerImage}
+          onPress={this.handleChoosePhoto}
+        >
+          <Text style={styles.buttonText}>CHOOSE IMAGE</Text>
+        </TouchableOpacity>
+        
+        <Text style={styles.heading}>Text</Text> 
+        <TextInput style={styles.inputText}
+                      multiline = {true} 
+                      blurOnSubmit = {true}
+                      onChangeText={(text) => this.setState({textovePole: text})}
+        />
+        
+        <TouchableOpacity
+          style= {styles.buttonContainerAdd}
+          onPress={this._onPress}
+        >
+          <Text style={styles.buttonText}>ADD</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    );
+  }
+}
+
   const styles = StyleSheet.create({
     title: {
-      margin: 50,
+      margin: 40,
       fontSize: 20,
       textAlign: 'center',
       color: 'grey',
@@ -147,14 +120,24 @@ export default class AddItem extends Component {
       padding: 10,
       color: 'grey'
   },
-    buttonContainer:{
+    buttonContainerAdd:{
+        paddingTop: 10,
         marginLeft: 30,
         marginRight: 30,
+        marginBottom: 10,
         backgroundColor: 'grey',
         paddingVertical: 15
     },
+    buttonContainerImage:{
+      paddingTop: 10,
+      marginLeft: 30,
+      marginRight: 30,
+      marginBottom: 10,
+      backgroundColor: 'lightblue',
+      paddingVertical: 15
+  },
     buttonText:{
-        color: '#323232',
+        color: '#fff',
         textAlign: 'center',
         fontWeight: '700'
     }
