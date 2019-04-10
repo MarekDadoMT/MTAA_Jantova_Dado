@@ -63,9 +63,12 @@ exports.getArticles = functions.https.onRequest((req, res) => {
                 
                 snapshot.forEach(function(childSnapshot) {
                     var key = childSnapshot.key;
+                    var body = childSnapshot.val();
+                    body["id"] = key;
 
                     articles.push({
-                        [key]: childSnapshot
+                        body
+                        //[key]: childSnapshot
                     })
                     
                 });

@@ -10,6 +10,9 @@ class fb {
 
     }
 
+
+
+
 async addToDatabase(url, state) {
     var obj = { author: "weWANTtoPass", category: state.category, image: url,  text: state.textovePole, title: state.title};
     var myJSON = JSON.stringify(obj);
@@ -30,6 +33,21 @@ async addToDatabase(url, state) {
              Alert.alert("Success", "Article was added")
         }
     });
+}
+
+async showData() {
+        return fetch('https://us-central1-mtaa-f5627.cloudfunctions.net/getArticles', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+            var articles = JSON.parse(response['_bodyText']);
+            //console.log(articles)
+
+            return articles;
+        })
 }
 
 async uploadImageAsync(uri) {  
