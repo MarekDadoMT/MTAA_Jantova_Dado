@@ -16,15 +16,15 @@ export default class List extends Component {
   async componentDidMount() {
     const pole = await fb.instance.showData();
     this.setState({data: pole})
-    console.log(this.state.data);
+    //console.log(this.state.data);
   }
 
   _keyExtractor = (item, index) => item.id;
 
     _renderItem({ item }) {
         return(
-            <View>
-                <Text>{item.id}</Text>
+            <View key={item}>
+                <Text>{item.body.id}</Text>
             </View>
         )
     }
@@ -48,6 +48,7 @@ export default class List extends Component {
                 keyExtractor={this._keyExtractor}
               />
             </View>
+            
         </View>
 
     );

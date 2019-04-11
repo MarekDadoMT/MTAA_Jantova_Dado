@@ -28,12 +28,15 @@ exports.addArticle = functions.https.onRequest((req, res) => {
 
                 var key = snapshot.key;
                 
-                admin.database().ref(`/articles/${key}`).on('value', (snapshot) => {
+                admin.database().ref(`/articles/${key}`).on('value', function(snapshot) {
                    
                     if(snapshot.val()) {
-                        res.status(200).send({
-                            [key]: snapshot.val()
-                        });
+                        var body = snapshot.val();
+                        body["id"] = key;
+
+                        res.status(200).send(
+                            body
+                        );
                     }
                     else {
                         res.status(404).send();
@@ -68,7 +71,6 @@ exports.getArticles = functions.https.onRequest((req, res) => {
 
                     articles.push({
                         body
-                        //[key]: childSnapshot
                     })
                     
                 });

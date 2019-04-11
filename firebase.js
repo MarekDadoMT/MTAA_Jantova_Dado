@@ -10,12 +10,12 @@ class fb {
 
     }
 
-
-
-
 async addToDatabase(url, state) {
+
     var obj = { author: "weWANTtoPass", category: state.category, image: url,  text: state.textovePole, title: state.title};
     var myJSON = JSON.stringify(obj);
+
+    console.log(myJSON);
     
     return fetch(
         'https://us-central1-mtaa-f5627.cloudfunctions.net/addArticle', {
@@ -43,14 +43,17 @@ async showData() {
                 'Content-Type': 'application/json',
             },
         }).then((response) => {
-            var articles = JSON.parse(response['_bodyText']);
-            //console.log(articles)
+            //var articles = JSON.parse(response['_bodyText']);
+var articles = response;
+
+            console.log(articles)
 
             return articles;
         })
 }
 
 async uploadImageAsync(uri) {  
+  
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function() {
@@ -71,7 +74,7 @@ async uploadImageAsync(uri) {
       .child(uuid.v4());
     
     const snapshot = await ref.put(blob);
-  
+
     blob.close();
   
     return await snapshot.ref.getDownloadURL();

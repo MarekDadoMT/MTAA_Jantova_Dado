@@ -36,6 +36,7 @@ export default class AddItem extends Component {
   };
 
   _onPress = () => {     
+
     fb.instance.uploadImageAsync(this.state.image).then((url) => {
       fb.instance.addToDatabase(url, this.state)
     }).catch(error => {
