@@ -29,15 +29,12 @@ export default class List extends Component {
         )
     }
 
-
-
-
-
   render() {
     return (
         <View>
             <View>
               <Button
+              
                   title="Add an Item"
                   //onPress={() => this.props.navigation.navigate('AddItem')}
                   onPress={() => this.props.navigation.navigate('AddItem')}
