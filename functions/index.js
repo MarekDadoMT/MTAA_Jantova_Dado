@@ -31,11 +31,11 @@ exports.addArticle = functions.https.onRequest((req, res) => {
                 admin.database().ref(`/articles/${key}`).on('value', function(snapshot) {
                    
                     if(snapshot.val()) {
-                        var body = snapshot.val();
-                        body["id"] = key;
+                        var snapshotBody = snapshot.val();
+                        snapshotBody["id"] = key;
 
                         res.status(200).send(
-                            body
+                            snapshotBody
                         );
                     }
                     else {
@@ -66,12 +66,12 @@ exports.getArticles = functions.https.onRequest((req, res) => {
                 
                 snapshot.forEach(function(childSnapshot) {
                     var key = childSnapshot.key;
-                    var body = childSnapshot.val();
-                    body["id"] = key;
+                    var childSnapshotBody = childSnapshot.val();
+                    childSnapshotBody["id"] = key;
 
-                    articles.push({
-                        body
-                    })
+                    articles.push(
+                        childSnapshotBody
+                    )
                     
                 });
                 res.status(200).send(articles);

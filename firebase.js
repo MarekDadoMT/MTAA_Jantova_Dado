@@ -12,7 +12,7 @@ class fb {
 
 async addToDatabase(url, state) {
 
-    var obj = { author: "weWANTtoPass", category: state.category, image: url,  text: state.textovePole, title: state.title};
+    var obj = { author: "Marek", category: state.category, image: url,  text: state.textovePole, title: state.title};
     var myJSON = JSON.stringify(obj);
 
     console.log(myJSON);
@@ -43,8 +43,7 @@ async showData() {
                 'Content-Type': 'application/json',
             },
         }).then((response) => {
-            //var articles = JSON.parse(response['_bodyText']);
-var articles = response;
+            var articles = JSON.parse(response['_bodyText']);
 
             console.log(articles)
 
