@@ -35,6 +35,20 @@ async addToDatabase(url, state) {
     });
 }
 
+async showArticle(id) {
+
+  return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticleId?key=${id}`, {
+    method: 'GET',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    },
+}).then((response) => {
+    var article = JSON.parse(response['_bodyText']);
+    return article;
+})
+}
+
 async showData() {
         return fetch('https://us-central1-mtaa-f5627.cloudfunctions.net/getArticles', {
             method: 'GET',
@@ -44,9 +58,6 @@ async showData() {
             },
         }).then((response) => {
             var articles = JSON.parse(response['_bodyText']);
-
-            console.log(articles)
-
             return articles;
         })
 }

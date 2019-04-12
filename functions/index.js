@@ -115,10 +115,12 @@ exports.getArticleId = functions.https.onRequest((req, res) => {
             return database.child(key).on('value', (snapshot) => {
                 
                 if(snapshot.val()) {
+                    var snapshotBody = snapshot.val();
+                    snapshotBody["id"] = key;
                     
-                    res.status(200).send({
-                        [key]: snapshot.val()
-                    });
+                    res.status(200).send(
+                        snapshotBody
+                    );
                 }
                 else {
                     res.status(404).send();

@@ -13,7 +13,9 @@ export default class List extends Component {
 
 
   async componentDidMount() {
-    const pole = await fb.instance.showData();
+    const pole = await fb.instance.showData().catch((error) => {
+      alert(error.message);
+    });
     this.setState({data: pole})
   }
 
@@ -22,7 +24,8 @@ export default class List extends Component {
 
     _renderItem = ({ item }) => {
         return(
-            <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => this.props.navigation.navigate('Article')}>
+            <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => this.props.navigation.navigate('Article', {id: item.id})}
+            >
             <Image
               source={{ uri: item.image }}
               style={{ width: 60, height: 60, margin: 20 }}
