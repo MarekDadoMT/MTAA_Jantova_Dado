@@ -43,10 +43,10 @@ async showArticle(id) {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
     },
-}).then((response) => {
-    var article = JSON.parse(response['_bodyText']);
-    return article;
-})
+    }).then((response) => {
+        var article = JSON.parse(response['_bodyText']);
+        return article;
+    })
 }
 
 async showData() {
@@ -60,6 +60,47 @@ async showData() {
             var articles = JSON.parse(response['_bodyText']);
             return articles;
         })
+
+
+}
+
+async deteleData(id) {
+    console.log(id);
+    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/deleteArticle?key=${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    }).then((response) => {
+        if(response.status !== 200) {
+            Alert.alert("Article was not DELETED from database", "naser si");
+        }
+        else {
+            Alert.alert("Success", "Article was DELETED")
+        }
+    });
+}
+
+async updateData(id, text) {
+   // console.log(id);
+   //console.log(text);
+    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/updateArticle?key=${id}` + `text=${text}`, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    }).then((response) => {
+        if(response.status !== 200) {
+            console.log("ZLE");
+            //Alert.alert("Article was not UPDATED from database", "naser si");
+        }
+        else {
+            console.log("DOBRE");
+            //Alert.alert("Success", "Article was UPDATED")
+        }
+    });
 }
 
 async uploadImageAsync(uri) {  

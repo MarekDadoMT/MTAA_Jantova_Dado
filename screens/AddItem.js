@@ -35,13 +35,17 @@ export default class AddItem extends Component {
     }
   };
 
-  _onPress = () => {     
+  _onPress = () => {
+      //const { navigate } = this.props.navigation;
 
-    fb.instance.uploadImageAsync(this.state.image).then((url) => {
-      fb.instance.addToDatabase(url, this.state)
-    }).catch(error => {
-      console.log('Something is wrong')
-    })
+      fb.instance.uploadImageAsync(this.state.image).then((url) => {
+          fb.instance.addToDatabase(url, this.state)
+      }).catch(error => {
+          console.log('Something is wrong')
+      })
+
+      //navigate("List");
+
   }
 
   render() {

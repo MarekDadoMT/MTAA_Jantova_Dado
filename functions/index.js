@@ -186,6 +186,9 @@ exports.updateArticle = functions.https.onRequest((req, res) => {
             
                 return admin.database().ref(`/articles/${key}`).on('value', (snapshot) => {
                     if(snapshot.val()) {
+                        // var snapshotBody = snapshot.val();
+                        // snapshotBody["id"] = key;
+
                         snapshot.ref.update({
                             "text": text
                         });
@@ -193,6 +196,7 @@ exports.updateArticle = functions.https.onRequest((req, res) => {
                         return admin.database().ref(`/articles/${key}`).on('value', (snapshot) => {
                             if(snapshot.val()) {
                                 var key = snapshot.key;
+
                                 res.status(200).send({
                                     [key]: snapshot.val()
                                 });

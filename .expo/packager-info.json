@@ -1,10 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 8092,
-  "expoServerNgrokUrl": "https://mc-n3v.tamarajantova.mtaa-jantova-dado.exp.direct",
-  "packagerNgrokUrl": "https://packager.mc-n3v.tamarajantova.mtaa-jantova-dado.exp.direct",
-  "ngrokPid": 15976,
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": "https://mc-n3v.anonymous.mtaa-jantova-dado.exp.direct",
+  "packagerNgrokUrl": "https://packager.mc-n3v.anonymous.mtaa-jantova-dado.exp.direct",
+  "ngrokPid": 7615,
   "webpackServerPort": null
 }

@@ -1,50 +1,77 @@
 import React, { Component } from 'react';  
 import { Button, View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import fb from '../firebase';
+import UpdateItem from "./UpdateItem";
 
 export default class Article extends Component {  
 
   constructor(props) {
     super(props);
     this.state = {
-      auth: '',
-      categ: '',
-      im: 'http://www.tiptoncommunications.com/components/com_easyblog/themes/wireframe/images/placeholder-image.png',
-      tex: '',
-      tit: ''
+      author: '',
+      category: '',
+      image: 'http://www.tiptoncommunications.com/components/com_easyblog/themes/wireframe/images/placeholder-image.png',
+      text: '',
+      title: ''
     };
   }
+
+  deleteArticle = () => {
+      const id = this.props.navigation.state.params.id;
+      //const { navigate } = this.props.navigation;
+      console.log(id);
+      fb.instance.deteleData(id);
+      //navigate('List');
+  };
   
   async componentDidMount() {
     const id = this.props.navigation.state.params.id;
     const article = await fb.instance.showArticle(id);
-    this.setState({auth: article.author, categ: article.category, im: article.image, tex: article.text, tit: article.title})
-    console.log(this.state.im)
+    this.setState({author: article.author, category: article.category, image: article.image, text: article.text, title: article.title})
   }
 
     render() {
+      const id = this.props.navigation.state.params.id;
       return (
         <View>
-          <Text style={styles.title}>{this.state.tit}</Text>
+          <Text style={styles.title}>{this.state.title}</Text>
 
           <View>
-          <Image source={{ uri: this.state.im }}
+          <Image source={{ uri: this.state.image }}
             //style={{ width: '100%'}}
            />
           </View>
 
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.heading}>Author: </Text>
-            <Text style={{color: '#585858'}}>{this.state.auth}</Text>
+            <Text style={{color: '#585858'}}>{this.state.author}</Text>
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.heading}>Category: </Text>
-            <Text style={{color: '#585858'}}>{this.state.categ}</Text>
+            <Text style={{color: '#585858'}}>{this.state.category}</Text>
           </View>
 
           <View>
-            <Text style={{color: '#585858', marginLeft: 30, marginTop: 10}} >{this.state.tex}</Text>
+            <Text style={{color: '#585858', marginLeft: 30, marginTop: 10}} >{this.state.text}</Text>
           </View>
+
+            <TouchableOpacity style={styles.buttonContainerAdd}
+                              onPress={() => this.deleteArticle(this.state.id)}
+            >
+                <Text style={styles.buttonText}>DELETE ARTICLE</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.buttonContainerAdd}
+                              onPress={() => this.props.navigation.navigate("UpdateItem", {
+                                  id: id,
+                                  title: this.state.title,
+                                  author: this.state.author,
+                                  category: this.state.category,
+                                  text: this.state.text
+                              })}
+            >
+                <Text style={styles.buttonText}>UPDATE ARTICLE</Text>
+            </TouchableOpacity>
 
         </View>
       );
@@ -90,6 +117,7 @@ export default class Article extends Component {
         paddingTop: 10,
         marginLeft: 30,
         marginRight: 30,
+        marginTop: 50,
         marginBottom: 10,
         backgroundColor: 'grey',
         paddingVertical: 15

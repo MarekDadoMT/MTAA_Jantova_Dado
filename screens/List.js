@@ -4,8 +4,10 @@ import fb from '../firebase';
 
 export default class List extends Component {
 
+
     constructor(props) {
       super(props);
+      //this.forceUpdate();
       this.state = {
         data: [],
       };
@@ -13,10 +15,14 @@ export default class List extends Component {
 
 
   async componentDidMount() {
-    const pole = await fb.instance.showData().catch((error) => {
-      alert(error.message);
-    });
-    this.setState({data: pole})
+    this.fetchData();
+  }
+
+  async fetchData() {
+      const pole = await fb.instance.showData().catch((error) => {
+          alert(error.message);
+      });
+      this.setState({data: pole})
   }
 
   _keyExtractor = (item, index) => item.id;

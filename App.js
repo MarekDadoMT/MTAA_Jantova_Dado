@@ -9,16 +9,18 @@ import AddItem from './screens/AddItem';
 import List from './screens/List';
 import Login from './screens/Login';
 import Article from './screens/Article';
+import UpdateItem from './screens/UpdateItem';
 //import { Http2ServerRequest } from 'http2';
 //import console = require('console');
 
 const AppNavigator = createStackNavigator(  
     {
-      Home,
-      AddItem,
-      List,
-      Login,
-      Article
+        Home,
+        AddItem,
+        List,
+        Login,
+        Article,
+        UpdateItem
     },
     {
       initialRouteName: 'Home'
