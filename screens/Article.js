@@ -34,18 +34,20 @@ export default class Article extends Component {
       const id = this.props.navigation.state.params.id;
       return (
         <View>
+
           <Text style={styles.title}>{this.state.title}</Text>
 
           <View>
-          <Image source={{ uri: this.state.image }}
+            <Image source={{ uri: this.state.image }}
             //style={{ width: '100%'}}
-           />
+            />
           </View>
 
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.heading}>Author: </Text>
             <Text style={{color: '#585858'}}>{this.state.author}</Text>
           </View>
+
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.heading}>Category: </Text>
             <Text style={{color: '#585858'}}>{this.state.category}</Text>
@@ -55,23 +57,23 @@ export default class Article extends Component {
             <Text style={{color: '#585858', marginLeft: 30, marginTop: 10}} >{this.state.text}</Text>
           </View>
 
-            <TouchableOpacity style={styles.buttonContainerAdd}
-                              onPress={() => this.deleteArticle(this.state.id)}
+          <TouchableOpacity style={styles.buttonContainerAdd}
+                            onPress={() => this.props.navigation.navigate("UpdateItem", {
+                              id: id,
+                              title: this.state.title,
+                              author: this.state.author,
+                              category: this.state.category,
+                              text: this.state.text
+                            })}
             >
-                <Text style={styles.buttonText}>DELETE ARTICLE</Text>
-            </TouchableOpacity>
+            <Text style={styles.buttonText}>UPDATE ARTICLE</Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity style={styles.buttonContainerAdd}
-                              onPress={() => this.props.navigation.navigate("UpdateItem", {
-                                  id: id,
-                                  title: this.state.title,
-                                  author: this.state.author,
-                                  category: this.state.category,
-                                  text: this.state.text
-                              })}
-            >
-                <Text style={styles.buttonText}>UPDATE ARTICLE</Text>
-            </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonContainerAdd}
+                            onPress={() => this.deleteArticle(this.state.id)}
+          >
+            <Text style={styles.buttonText}>DELETE ARTICLE</Text>
+          </TouchableOpacity>
 
         </View>
       );
@@ -117,10 +119,11 @@ export default class Article extends Component {
         paddingTop: 10,
         marginLeft: 30,
         marginRight: 30,
-        marginTop: 50,
-        marginBottom: 10,
+        marginTop: 10,
         backgroundColor: 'grey',
-        paddingVertical: 15
+        paddingVertical: 15,
+        top: '95%',
+        position: 'relative'
     },
     buttonContainerImage:{
       paddingTop: 10,

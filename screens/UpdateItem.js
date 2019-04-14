@@ -4,23 +4,20 @@ import { Permissions, ImagePicker } from 'expo';
 
 import fb from '../firebase';
 
+
 export default class AddItem extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            author: '',
-            category: '',
-            image: 'http://www.tiptoncommunications.com/components/com_easyblog/themes/wireframe/images/placeholder-image.png',
-            text: '',
-            title: ''
+            text: ''
         }
     }
 
 
     _updateArticle = () => {
         const id = this.props.navigation.state.params.id;
-        fb.instance.updateData(id);
+        fb.instance.updateData(id, this.state);
     };
 
     render() {
@@ -29,15 +26,16 @@ export default class AddItem extends Component {
         const title = params ? params.title : null;
         const author = params ? params.author : null;
         const category = params ? params.category: null;
-        //const povodnyText = params ? params.text : null;
-        //console.log(povodnyText);
 
         return (
             <KeyboardAvoidingView behavior="position">
 
-                <Text style={styles.title}>{JSON.stringify(id)}</Text>
                 <Text style={styles.title}>{title}</Text>
 
+                <View style={{flexDirection: 'row'}}>
+                    <Text style={styles.heading}>Id: </Text>
+                    <Text style={{color: '#585858'}}>{JSON.stringify(id)}</Text>
+                </View>
 
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.heading}>Author: </Text>
@@ -49,19 +47,25 @@ export default class AddItem extends Component {
                     <Text style={{color: '#585858'}}>{category}</Text>
                 </View>
 
+                <View>
+                    <Text style={styles.heading}>Text: </Text>
+                </View>
+
                 <TextInput style={styles.inputText}
                            multiline = {true}
                            blurOnSubmit = {true}
-                           placeholder="Edit your text"
+                           //placeholder={params.text}
+                           //defaultValue = {params.text}
                            onChangeText={(text) => this.setState({text})}
-                           value={this.state.text}
+                           //value={this.state.text}
+                           //value={params.text}
                 />
 
 
                 <TouchableOpacity style={styles.buttonContainerAdd}
                                   onPress={() => this._updateArticle(id)}
                 >
-                    <Text style={styles.buttonText}>Update article</Text>
+                    <Text style={styles.buttonText}>UPDATE</Text>
                 </TouchableOpacity>
 
             </KeyboardAvoidingView>
@@ -98,7 +102,7 @@ const styles = StyleSheet.create({
     inputText:{
         marginLeft: 30,
         marginRight: 30,
-        height: 120,
+        height: 270,
         backgroundColor: 'rgba(225,225,225,0.2)',
         marginBottom: 10,
         padding: 10,
@@ -110,7 +114,9 @@ const styles = StyleSheet.create({
         marginRight: 30,
         marginBottom: 10,
         backgroundColor: 'grey',
-        paddingVertical: 15
+        paddingVertical: 15,
+        top: '5%',
+        position: 'relative'
     },
     buttonContainerImage:{
         paddingTop: 10,

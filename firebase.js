@@ -82,23 +82,30 @@ async deteleData(id) {
     });
 }
 
-async updateData(id, text) {
-   // console.log(id);
-   //console.log(text);
-    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/updateArticle?key=${id}` + `text=${text}`, {
+async updateData(id, state) {
+
+    console.log(state.text);
+
+    var obj = { text: state.text};
+    var myJSON = JSON.stringify(obj);
+
+    console.log(myJSON);
+    
+   
+    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/updateArticle?key=${id}`, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
         },
+        body: myJSON
     }).then((response) => {
+        
         if(response.status !== 200) {
-            console.log("ZLE");
-            //Alert.alert("Article was not UPDATED from database", "naser si");
+            Alert.alert("Article was not updated.");
         }
         else {
-            console.log("DOBRE");
-            //Alert.alert("Success", "Article was UPDATED")
+            Alert.alert("Success", "Article was updated.")
         }
     });
 }
