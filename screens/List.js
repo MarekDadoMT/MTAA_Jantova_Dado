@@ -1,5 +1,5 @@
 import React, { Component } from 'react';  
-import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker} from 'react-native';
 import fb from '../firebase';
 
 export default class List extends Component {
@@ -7,12 +7,11 @@ export default class List extends Component {
 
     constructor(props) {
       super(props);
-      //this.forceUpdate();
       this.state = {
         data: [],
+        category: ''
       };
     }
-
 
   async componentDidMount() {
     this.fetchData();
@@ -25,6 +24,13 @@ export default class List extends Component {
       this.setState({data: pole})
   }
 
+  async fetchDataCategory() {
+    const pole = await fb.instance.showArticleCategory(this.state.category).catch((error) => {
+      alert(error.message);
+    });
+    this.setState({data: pole})
+  }
+
   _keyExtractor = (item, index) => item.id;
   _flatListSeparator = () => <View style={styles.line} />;
 
@@ -34,7 +40,7 @@ export default class List extends Component {
             >
             <Image
               source={{ uri: item.image }}
-              style={{ width: 60, height: 60, margin: 20 }}
+              style={{ width: 60, height: 60, margin: 30 }}
             />
                 <Text style={styles.heading}>{item.title}</Text>
             </TouchableOpacity>
@@ -46,10 +52,35 @@ export default class List extends Component {
         <View>
           
           <TouchableOpacity style={styles.buttonContainerAdd} 
-              onPress={() => this.props.navigation.navigate('AddItem')}
-              >
-              <Text style={styles.buttonText}>ADD ARTICLE</Text>
+                            onPress={() => this.props.navigation.navigate('AddItem')}
+          >
+          <Text style={styles.buttonText}>ADD ARTICLE</Text>
           </TouchableOpacity> 
+
+          <View style = {{flexDirection: 'row'}}>
+          <Picker
+                selectedValue={this.state.category}
+                style={{ marginLeft: 30, width: 100}}
+                onValueChange={(itemValue, itemIndex) => this.setState({category: itemValue})}
+          >
+            <Picker.Item label="Football" value="Fotball" />
+            <Picker.Item label="Hockey" value="Hockey" />
+          </Picker>
+
+          <View>
+          <TouchableOpacity style={styles.buttonFilter}
+                            onPress={() => this.fetchDataCategory()}
+          >
+          <Text style={styles.buttonText}>FILTER</Text>
+          </TouchableOpacity> 
+
+          <TouchableOpacity style={styles.buttonUnfilter}
+                            onPress={() => this.fetchDataCategory}
+          >
+          <Text style={styles.buttonText}>UNFILTER</Text>
+          </TouchableOpacity> 
+          </View>
+          </View>
 
           <View>
               <FlatList
@@ -73,12 +104,31 @@ const styles = StyleSheet.create({
       paddingTop: 25,
       fontSize: 17
     },
+  buttonFilter:{
+      marginTop: 65,
+      paddingTop: 10,
+      marginLeft: 30,
+      marginRight: 30,
+      width: 180,
+      height: 40,
+      backgroundColor: 'lightblue',
+      paddingVertical: 15,
+  },
+  buttonUnfilter:{
+      marginTop: 20,
+      paddingTop: 10,
+      marginLeft: 30,
+      marginRight: 30,
+      width: 180,
+      height: 40,
+      backgroundColor: 'lightblue',
+      paddingVertical: 15,   
+  },
   buttonContainerAdd:{
       marginTop: 20,
       paddingTop: 10,
       marginLeft: 30,
       marginRight: 30,
-      //marginBottom: 10,
       backgroundColor: 'grey',
       paddingVertical: 15,
   },

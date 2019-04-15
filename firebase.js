@@ -49,6 +49,20 @@ async showArticle(id) {
     })
 }
 
+async showArticleCategory(category) {
+
+    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticleCategory?category=${category}`, {
+      method: 'GET',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+      }).then((response) => {
+          var articles = JSON.parse(response['_bodyText']);
+          return articles;
+      })
+  }
+
 async showData() {
         return fetch('https://us-central1-mtaa-f5627.cloudfunctions.net/getArticles', {
             method: 'GET',
