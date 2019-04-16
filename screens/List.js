@@ -1,6 +1,9 @@
 import React, { Component } from 'react';  
 import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker} from 'react-native';
 import fb from '../firebase';
+import IOSPicker from 'react-native-ios-picker';
+
+const data = [{category: 'Football', code: '1'},{category: 'Hockey', code: '2'}]
 
 export default class List extends Component {
 
@@ -9,7 +12,7 @@ export default class List extends Component {
       super(props);
       this.state = {
         data: [],
-        category: ''
+        selectedValue: ''
       };
     }
 
@@ -25,10 +28,15 @@ export default class List extends Component {
   }
 
   async fetchDataCategory() {
-    const pole = await fb.instance.showArticleCategory(this.state.category).catch((error) => {
+    const pole = await fb.instance.showArticleCategory(this.state.selectedValue).catch((error) => {
       alert(error.message);
     });
     this.setState({data: pole})
+  }
+
+  change(d, i) {
+    this.setState({selectedValue: data[i].category});
+    this.fetchDataCategory();
   }
 
   _keyExtractor = (item, index) => item.id;
@@ -57,7 +65,24 @@ export default class List extends Component {
           <Text style={styles.buttonText}>ADD ARTICLE</Text>
           </TouchableOpacity> 
 
-          <View style = {{flexDirection: 'row'}}>
+          <Text style={styles.heading}>Filter by category:</Text>
+          
+          <View style={styles.combobox}>
+          <IOSPicker 
+          selectedValue={this.state.selectedValue}
+          onValueChange={(d, i)=> this.change(d, i)}
+          mode='modal'
+          textStyle={{color: 'grey'}}
+          >
+          { 
+            data.map((item, index)=>
+              <Picker.Item key={index} label={item.category} value={item.code} />
+            )
+          }
+          </IOSPicker>
+          </View>
+
+          {/* <View style = {{flexDirection: 'row'}}>
           <Picker
                 selectedValue={this.state.category}
                 style={{ marginLeft: 30, width: 100}}
@@ -80,7 +105,7 @@ export default class List extends Component {
           <Text style={styles.buttonText}>UNFILTER</Text>
           </TouchableOpacity> 
           </View>
-          </View>
+          </View> */}
 
           <View>
               <FlatList
@@ -98,11 +123,30 @@ export default class List extends Component {
 }
 
 const styles = StyleSheet.create({
+  combobox: {
+    //flex: 1,
+    marginTop: 20,
+    marginLeft: 30,
+    marginRight: 30,
+    backgroundColor: 'grey',
+    borderColor: '#d6d7da',
+    //borderRadius: 4,
+    borderWidth: 0.5,
+    //color: 'grey'
+  },
   heading: {
       color: 'grey',
       fontWeight: '700',
       paddingTop: 25,
-      fontSize: 17
+      fontSize: 15,
+      marginLeft: 30
+    },
+    title: {
+      margin: 40,
+      fontSize: 20,
+      textAlign: 'center',
+      color: 'grey',
+      fontWeight: '700'
     },
   buttonFilter:{
       marginTop: 65,

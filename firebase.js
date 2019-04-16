@@ -98,12 +98,12 @@ async deteleData(id) {
 
 async updateData(id, state) {
 
-    console.log(state.text);
+    //console.log(state.text);
 
     var obj = { text: state.text};
     var myJSON = JSON.stringify(obj);
 
-    console.log(myJSON);
+   // console.log(myJSON);
     
    
     return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/updateArticle?key=${id}`, {
