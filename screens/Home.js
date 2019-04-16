@@ -12,10 +12,19 @@ export default class Home extends Component {
     render() {
       return (
         <View>
-      <ImageBackground source={require('../images/baseball.jpg')} style={{width: '100%', height: '100%'}}>
-      <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} style={styles.buttonContainer}>
-         <Text style={styles.button}>Login as administrator</Text>
-        </TouchableOpacity>
+      <ImageBackground source={require('../images/ball.jpg')} style={{width: '100%', height: '100%'}}>
+
+        <View>
+          <Text style={styles.logo}>TMSport.</Text>
+          <View style={{borderRadius: 10, padding: 2, overflow: 'hidden'}}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>
+            <Text style={styles.button}>Log In</Text>
+          </TouchableOpacity>
+          </View>
+          <TouchableOpacity>
+            <Text style={styles.text}>Continue as user.</Text>
+          </TouchableOpacity>
+        </View>
        </ImageBackground>
         </View>
       );
@@ -38,22 +47,44 @@ export default class Home extends Component {
         fontWeight: '700'
       },
     button: {
-      //justifyContent: 'center',
-      //marginTop: 100,
-      //margin: 40,
-      
-      fontSize: 23,
+      backgroundColor: 'white',
+      color: '#08088A',
+      width: "75%",
+      borderRadius: 25,
       textAlign: 'center',
-      color: 'white',
-      fontWeight: '500',
+      fontWeight: 'bold',
+      marginLeft: 50,
+      marginRight: 30,
+      padding: "2%",
+      fontSize:  27,
+      marginTop: 360,
+      justifyContent: 'center',
+      alignItems: 'center',
+      overflow: 'hidden'
     },
     buttonContainer: {
         marginLeft: 30,
         marginRight: 30,
-        marginTop: 100,
+        marginTop: 250,
         backgroundColor: 'lightgrey',
         borderColor: 'white',
         paddingVertical: 15,
         borderWidth: 0.5
+    },
+    logo: {
+      marginLeft: 30,
+      marginTop: 70,
+      color: 'white',
+      fontSize: 32,
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
+    text: {
+      color: 'white',
+      //marginLeft: 30,
+      marginTop: 20,
+      textAlign: 'center',
+      fontWeight: 'bold',
+      fontSize: 20
     }
 });
