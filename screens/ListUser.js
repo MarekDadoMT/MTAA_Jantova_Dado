@@ -7,7 +7,6 @@ const data = [{category: 'Football', code: '1'},{category: 'Hockey', code: '2'}]
 
 export default class List extends Component {
 
-
     constructor(props) {
       super(props);
       this.state = {
@@ -44,7 +43,7 @@ export default class List extends Component {
 
     _renderItem = ({ item }) => {
         return(
-            <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => this.props.navigation.navigate('Article', {id: item.id})}
+            <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => this.props.navigation.navigate('ArticleUser', {id: item.id})}
             >
             <Image
               source={{ uri: item.image }}
@@ -58,12 +57,6 @@ export default class List extends Component {
   render() {
     return (
         <View>
-          
-          <TouchableOpacity style={styles.buttonContainerAdd} 
-                            onPress={() => this.props.navigation.navigate('AddItem')}
-          >
-          <Text style={styles.buttonText}>ADD ARTICLE</Text>
-          </TouchableOpacity> 
 
           <Text style={styles.heading}>Filter by category:</Text>
           
@@ -72,7 +65,7 @@ export default class List extends Component {
           selectedValue={this.state.selectedValue}
           onValueChange={(d, i)=> this.change(d, i)}
           mode='modal'
-          textStyle={{color: 'black'}}
+          textStyle={{color: 'grey'}}
           >
           { 
             data.map((item, index)=>
@@ -81,31 +74,6 @@ export default class List extends Component {
           }
           </IOSPicker>
           </View>
-
-          {/* <View style = {{flexDirection: 'row'}}>
-          <Picker
-                selectedValue={this.state.category}
-                style={{ marginLeft: 30, width: 100}}
-                onValueChange={(itemValue, itemIndex) => this.setState({category: itemValue})}
-          >
-            <Picker.Item label="Football" value="Fotball" />
-            <Picker.Item label="Hockey" value="Hockey" />
-          </Picker>
-
-          <View>
-          <TouchableOpacity style={styles.buttonFilter}
-                            onPress={() => this.fetchDataCategory()}
-          >
-          <Text style={styles.buttonText}>FILTER</Text>
-          </TouchableOpacity> 
-
-          <TouchableOpacity style={styles.buttonUnfilter}
-                            onPress={() => this.fetchDataCategory}
-          >
-          <Text style={styles.buttonText}>UNFILTER</Text>
-          </TouchableOpacity> 
-          </View>
-          </View> */}
 
           <View>
               <FlatList
@@ -128,8 +96,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 30,
     marginRight: 30,
-    backgroundColor: 'grey',
-    borderColor: '#d6d7da',
+    //backgroundColor: 'grey',
+    borderColor: 'black',
     borderRadius: 20,
     borderWidth: 0.5,
     overflow: 'hidden'
@@ -156,7 +124,7 @@ const styles = StyleSheet.create({
       marginRight: 30,
       width: 180,
       height: 40,
-      backgroundColor: 'lightblue',
+      //backgroundColor: 'lightblue',
       paddingVertical: 15,
   },
   buttonUnfilter:{
@@ -185,6 +153,6 @@ const styles = StyleSheet.create({
   line: {
     height: 0.5,
     width: '100%',
-    backgroundColor: 'black'
+    backgroundColor: 'grey'
   }
 });

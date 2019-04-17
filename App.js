@@ -10,8 +10,8 @@ import List from './screens/List';
 import Login from './screens/Login';
 import Article from './screens/Article';
 import UpdateItem from './screens/UpdateItem';
-//import { Http2ServerRequest } from 'http2';
-//import console = require('console');
+import ListUser from './screens/ListUser';
+import ArticleUser from './screens/ArticleUser';
 
 const AppNavigator = createStackNavigator(  
     {
@@ -20,7 +20,9 @@ const AppNavigator = createStackNavigator(
         List,
         Login,
         Article,
-        UpdateItem
+        UpdateItem,
+        ListUser,
+        ArticleUser
     },
     {
       initialRouteName: 'Home'

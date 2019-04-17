@@ -21,7 +21,7 @@ export default class Home extends Component {
             <Text style={styles.button}>Log In</Text>
           </TouchableOpacity>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('ListUser')}>
             <Text style={styles.text}>Continue as user.</Text>
           </TouchableOpacity>
         </View>
@@ -50,7 +50,7 @@ export default class Home extends Component {
       backgroundColor: 'white',
       color: '#08088A',
       width: "75%",
-      borderRadius: 25,
+      borderRadius: 20,
       textAlign: 'center',
       fontWeight: 'bold',
       marginLeft: 50,
