@@ -1,5 +1,5 @@
 import React, { Component } from 'react';  
-import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker} from 'react-native';
+import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker, ScrollView} from 'react-native';
 import fb from '../firebase';
 import IOSPicker from 'react-native-ios-picker';
 
@@ -12,31 +12,48 @@ export default class List extends Component {
       super(props);
       this.state = {
         data: [],
-        selectedValue: ''
+        marek: ''
       };
     }
 
-  async componentDidMount() {
+   componentDidMount() {
     this.fetchData();
   }
 
-  async fetchData() {
+   async fetchData () {
       const pole = await fb.instance.showData().catch((error) => {
           alert(error.message);
       });
       this.setState({data: pole})
   }
 
-  async fetchDataCategory() {
-    const pole = await fb.instance.showArticleCategory(this.state.selectedValue).catch((error) => {
-      alert(error.message);
-    });
-    this.setState({data: pole})
-  }
+  //  fetchDataCategory = () => {
+  //       console.log("Ahoj" + this.state.selectedValue);
+  //   const pole =  fb.instance.showArticleCategory(this.state.selectedValue).catch((error) => {
+  //     alert(error.message);
+  //   });
+  //   this.setState({data: pole})
+  // }
 
-  change(d, i) {
-    this.setState({selectedValue: data[i].category});
-    this.fetchDataCategory();
+   change = (d, i) => {
+        //console.log(d);
+        //console.log(i);
+        //console.log(data[i].category);
+    //this.setState({selectedValue: data[i].category});
+
+       this.setState({ marek: data[i].category });
+       console.log(this.state.marek)
+
+       //console.log("Ahoj" + this.state.selectedValue);
+       const pole =  fb.instance.showArticleCategory(this.state.marek).catch((error) => {
+           alert(error.message);
+       });
+       this.setState({data: pole})
+
+
+    //console.log(this.state.selectedValue);
+
+       //this.fetchDataCategory();
   }
 
   _keyExtractor = (item, index) => item.id;
@@ -58,64 +75,66 @@ export default class List extends Component {
   render() {
     return (
         <View>
-          
-          <TouchableOpacity style={styles.buttonContainerAdd} 
-                            onPress={() => this.props.navigation.navigate('AddItem')}
-          >
-          <Text style={styles.buttonText}>ADD ARTICLE</Text>
-          </TouchableOpacity> 
+            <ScrollView>
 
-          <Text style={styles.heading}>Filter by category:</Text>
-          
-          <View style={styles.combobox}>
-          <IOSPicker 
-          selectedValue={this.state.selectedValue}
-          onValueChange={(d, i)=> this.change(d, i)}
-          mode='modal'
-          textStyle={{color: 'black'}}
-          >
-          { 
-            data.map((item, index)=>
-              <Picker.Item key={index} label={item.category} value={item.code} />
-            )
-          }
-          </IOSPicker>
-          </View>
+              <TouchableOpacity style={styles.buttonContainerAdd}
+                                onPress={() => this.props.navigation.navigate('AddItem')}
+              >
+              <Text style={styles.buttonText}>ADD ARTICLE</Text>
+              </TouchableOpacity>
 
-          {/* <View style = {{flexDirection: 'row'}}>
-          <Picker
-                selectedValue={this.state.category}
-                style={{ marginLeft: 30, width: 100}}
-                onValueChange={(itemValue, itemIndex) => this.setState({category: itemValue})}
-          >
-            <Picker.Item label="Football" value="Fotball" />
-            <Picker.Item label="Hockey" value="Hockey" />
-          </Picker>
+              <Text style={styles.heading}>Filter by category:</Text>
 
-          <View>
-          <TouchableOpacity style={styles.buttonFilter}
-                            onPress={() => this.fetchDataCategory()}
-          >
-          <Text style={styles.buttonText}>FILTER</Text>
-          </TouchableOpacity> 
+              <View style={styles.combobox}>
+              <IOSPicker
+              selectedValue={this.state.marek}
+              onValueChange={(d, i)=> this.change(d, i)}
+              mode='modal'
+              textStyle={{color: 'black'}}
+              >
+              {
+                data.map((item, index)=>
+                  <Picker.Item key={index} label={item.category} value={item.code} />
+                )
+              }
+              </IOSPicker>
+              </View>
 
-          <TouchableOpacity style={styles.buttonUnfilter}
-                            onPress={() => this.fetchDataCategory}
-          >
-          <Text style={styles.buttonText}>UNFILTER</Text>
-          </TouchableOpacity> 
-          </View>
-          </View> */}
+              {/* <View style = {{flexDirection: 'row'}}>
+              <Picker
+                    selectedValue={this.state.category}
+                    style={{ marginLeft: 30, width: 100}}
+                    onValueChange={(itemValue, itemIndex) => this.setState({category: itemValue})}
+              >
+                <Picker.Item label="Football" value="Fotball" />
+                <Picker.Item label="Hockey" value="Hockey" />
+              </Picker>
 
-          <View>
-              <FlatList
-                data ={this.state.data}
-                ItemSeparatorComponent={this._flatListSeparator}
-                renderItem ={this._renderItem}
-                keyExtractor={this._keyExtractor}
-              />
-          </View>      
-            
+              <View>
+              <TouchableOpacity style={styles.buttonFilter}
+                                onPress={() => this.fetchDataCategory()}
+              >
+              <Text style={styles.buttonText}>FILTER</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.buttonUnfilter}
+                                onPress={() => this.fetchDataCategory}
+              >
+              <Text style={styles.buttonText}>UNFILTER</Text>
+              </TouchableOpacity>
+              </View>
+              </View> */}
+
+              <View>
+                  <FlatList
+                    data ={this.state.data}
+                    ItemSeparatorComponent={this._flatListSeparator}
+                    renderItem ={this._renderItem}
+                    keyExtractor={this._keyExtractor}
+                  />
+              </View>
+
+            </ScrollView>
         </View>
 
     );

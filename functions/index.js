@@ -5,6 +5,7 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 const database = admin.database().ref('/articles');
+const login = admin.database().ref('/users');
 
 exports.addArticle = functions.https.onRequest((req, res) => {
 
@@ -214,6 +215,48 @@ exports.updateArticle = functions.https.onRequest((req, res) => {
         }
     }
     else {
+        res.status(400).send();
+    }
+});
+
+exports.auth = functions.https.onRequest((req, res) => {
+
+    if(req.method === 'POST') {
+
+        var username = req.query.username;
+        var password = req.query.password;
+
+        if(username) {
+            if (password) {
+
+                return login.orderByChild('username').equalTo(username).once('value', (snapshot) => {
+
+                    if (snapshot.val()) {
+
+                        var obj = snapshot.val();
+                        var key = Object.keys(obj)[0];
+                        var user = obj[key];
+
+                        if (user.password === password) {
+
+                            return admin.auth().createCustomToken(user.username).then((token) => {
+                                res.status(200).send(token);
+                            });
+
+                        } else {
+                            res.status(403).send('Incorrect password');
+                        }
+                    } else {
+                        res.status(403).send('Incorrect username');
+                    }
+                });
+            } else {
+                res.status(400).send('Missing parameter');
+            }
+        } else {
+            res.status(400).send('Missing parameter');
+        }
+    } else {
         res.status(400).send();
     }
 });

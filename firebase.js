@@ -51,6 +51,8 @@ async showArticle(id) {
 
 async showArticleCategory(category) {
 
+        console.log("Firebase " + category);
+
     return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticleCategory?category=${category}`, {
       method: 'GET',
       headers: {
