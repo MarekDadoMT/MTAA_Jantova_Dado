@@ -10,7 +10,27 @@ class fb {
 
     }
 
-async addToDatabase(url, state) {
+    login(password, username) {
+
+        return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/auth?username=${username}&password=${password}`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+
+            if(response.status !== 200) {
+                Alert.alert("Wrong username or password..");
+            }
+            else {
+                let token = response['_bodyText'];
+                return token;
+            }
+        })
+    }
+
+async addToDatabase(url, state, token) {
 
     var obj = { author: "Marek", category: state.category, image: url,  text: state.textovePole, title: state.title};
     var myJSON = JSON.stringify(obj);
@@ -18,7 +38,7 @@ async addToDatabase(url, state) {
     console.log(myJSON);
     
     return fetch(
-        'https://us-central1-mtaa-f5627.cloudfunctions.net/addArticle', {
+        `https://us-central1-mtaa-f5627.cloudfunctions.net/addArticle?token=${token}`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -35,9 +55,9 @@ async addToDatabase(url, state) {
     });
 }
 
-async showArticle(id) {
+async showArticle(id, token) {
 
-  return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticleId?key=${id}`, {
+  return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticleId?key=${id}&token=${token}`, {
     method: 'GET',
     headers: {
         'Accept': 'application/json',
@@ -49,11 +69,11 @@ async showArticle(id) {
     })
 }
 
-async showArticleCategory(category) {
+async showArticleCategory(category, token) {
 
         console.log("Firebase " + category);
 
-    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticleCategory?category=${category}`, {
+    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticleCategory?category=${category}&token=${token}`, {
       method: 'GET',
       headers: {
           'Accept': 'application/json',
@@ -65,8 +85,8 @@ async showArticleCategory(category) {
       })
   }
 
-async showData() {
-        return fetch('https://us-central1-mtaa-f5627.cloudfunctions.net/getArticles', {
+async showData(token) {
+        return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticles?token=${token}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -80,9 +100,9 @@ async showData() {
 
 }
 
-async deteleData(id) {
+async deteleData(id, token) {
     console.log(id);
-    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/deleteArticle?key=${id}`, {
+    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/deleteArticle?key=${id}&token=${token}`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',
@@ -98,7 +118,7 @@ async deteleData(id) {
     });
 }
 
-async updateData(id, state) {
+async updateData(id, state, token) {
 
     //console.log(state.text);
 
@@ -108,7 +128,7 @@ async updateData(id, state) {
    // console.log(myJSON);
     
    
-    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/updateArticle?key=${id}`, {
+    return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/updateArticle?key=${id}&token=${token}`, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
@@ -156,4 +176,5 @@ async uploadImageAsync(uri) {
 }
 
 fb.instance = new fb()
+fb.instance.token = '';
 export default fb;

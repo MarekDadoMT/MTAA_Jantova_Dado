@@ -18,7 +18,7 @@ export default class Article extends Component {
   
   async componentDidMount() {
     const id = this.props.navigation.state.params.id;
-    const article = await fb.instance.showArticle(id);
+    const article = await fb.instance.showArticle(id, "user");
     this.setState({author: article.author, category: article.category, image: article.image, text: article.text, title: article.title})
   }
 

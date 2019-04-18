@@ -1,5 +1,5 @@
 import React, { Component } from 'react';  
-import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker, ScrollView} from 'react-native';
+import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker, ScrollView, Switch} from 'react-native';
 import fb from '../firebase';
 import IOSPicker from 'react-native-ios-picker';
 
@@ -12,7 +12,8 @@ export default class List extends Component {
       super(props);
       this.state = {
         data: [],
-        marek: ''
+        marek: '',
+        switchValue: false
       };
     }
 
@@ -21,21 +22,21 @@ export default class List extends Component {
   }
 
    async fetchData () {
-      const pole = await fb.instance.showData().catch((error) => {
+      const pole = await fb.instance.showData(fb.instance.token).catch((error) => {
           alert(error.message);
       });
       this.setState({data: pole})
   }
 
-  //  fetchDataCategory = () => {
-  //       console.log("Ahoj" + this.state.selectedValue);
-  //   const pole =  fb.instance.showArticleCategory(this.state.selectedValue).catch((error) => {
-  //     alert(error.message);
-  //   });
-  //   this.setState({data: pole})
-  // }
+   fetchDataCategory () {
+        console.log("Ahoj" + this.state.selectedValue);
+    const pole =  fb.instance.showArticleCategory(this.state.selectedValue, fb.instance.token).catch((error) => {
+      alert(error.message);
+    });
+    this.setState({data: pole})
+  }
 
-   change = (d, i) => {
+   change(d, i) {
         //console.log(d);
         //console.log(i);
         //console.log(data[i].category);
@@ -55,6 +56,25 @@ export default class List extends Component {
 
        //this.fetchDataCategory();
   }
+
+    toggleSwitch = (value) => {
+        //onValueChange of the switch this function will be called
+        this.setState({switchValue: value})
+        //state changes according to switch
+        //which will result in re-render the text
+
+        if(value == true)
+        {
+
+            //Perform any task here which you want to execute on Switch ON event.
+            this.fetchDataCategory();
+        }
+        else{
+
+            //Perform any task here which you want to execute on Switch OFF event.
+            this.fetchData();
+        }
+    }
 
   _keyExtractor = (item, index) => item.id;
   _flatListSeparator = () => <View style={styles.line} />;
@@ -85,20 +105,23 @@ export default class List extends Component {
 
               <Text style={styles.heading}>Filter by category:</Text>
 
-              <View style={styles.combobox}>
-              <IOSPicker
-              selectedValue={this.state.marek}
-              onValueChange={(d, i)=> this.change(d, i)}
-              mode='modal'
-              textStyle={{color: 'black'}}
-              >
-              {
-                data.map((item, index)=>
-                  <Picker.Item key={index} label={item.category} value={item.code} />
-                )
-              }
-              </IOSPicker>
-              </View>
+                <View style={{padding: 30}}>
+                  <Picker
+                      selectedValue={this.state.marek}
+                      style={{height: 50, width: 200, marginLeft: 90}}
+                      onValueChange={(itemValue, itemIndex) =>
+                          this.setState({marek: itemValue})
+                      }>
+                      <Picker.Item label="Hockey" value="Hockey" />
+                      <Picker.Item label="Football" value="Football" />
+                  </Picker>
+
+                  <Switch
+                      style={{}}
+                      onValueChange = {this.toggleSwitch}
+                      value = {this.state.switchValue}/>
+                </View>
+
 
               {/* <View style = {{flexDirection: 'row'}}>
               <Picker

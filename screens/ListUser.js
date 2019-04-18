@@ -20,14 +20,14 @@ export default class List extends Component {
   }
 
   async fetchData() {
-      const pole = await fb.instance.showData().catch((error) => {
+      const pole = await fb.instance.showData("user").catch((error) => {
           alert(error.message);
       });
       this.setState({data: pole})
   }
 
   async fetchDataCategory() {
-    const pole = await fb.instance.showArticleCategory(this.state.selectedValue).catch((error) => {
+    const pole = await fb.instance.showArticleCategory(this.state.selectedValue, "user").catch((error) => {
       alert(error.message);
     });
     this.setState({data: pole})

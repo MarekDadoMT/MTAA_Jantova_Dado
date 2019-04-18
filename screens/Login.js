@@ -1,29 +1,33 @@
 import { View, Text, TextInput, TouchableOpacity,StyleSheet} from 'react-native';
 import React, { Component } from 'react';
+import fb from '../firebase';
 
 export default class Login extends Component {
     render() {
+
+        var username = '';
+        var password = '';
+
       return (
         <View style = {styles.container}>
             <TextInput style = {styles.input} 
                autoCapitalize="none" 
-               onSubmitEditing={() => this.passwordInput.focus()} 
-               autoCorrect={false} 
-               keyboardType='email-address' 
-               returnKeyType="next" 
+               onChangeText = {(text_user) => username = text_user}
+               autoCorrect={false}
                placeholder='Username' 
                placeholderTextColor='grey'/>
-            <TextInput style = {styles.input}   
-              returnKeyType="go" 
-              ref={(input)=> this.passwordInput = input} 
+            <TextInput style = {styles.input}
+                       onChangeText = {(passwd_user) => password = passwd_user}
               placeholder='Password' 
               placeholderTextColor='grey' 
               secureTextEntry/>
 
-            <TouchableOpacity style={styles.buttonContainer} 
-                     //onPress={onButtonPress}
-                     onPress={() => this.props.navigation.navigate('List')}
-                     >
+            <TouchableOpacity style={styles.buttonContainer}
+                     onPress={() => fb.instance.login(password.toString(), username.toString()).then(tok => {
+                         fb.instance.token = tok
+                         this.props.navigation.navigate('List');
+                     })}
+            >
                     <Text style={styles.buttonText}>LOGIN</Text>
             </TouchableOpacity> 
 

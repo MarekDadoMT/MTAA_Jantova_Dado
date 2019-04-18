@@ -20,13 +20,13 @@ export default class Article extends Component {
       const id = this.props.navigation.state.params.id;
       //const { navigate } = this.props.navigation;
       console.log(id);
-      fb.instance.deteleData(id);
+      fb.instance.deteleData(id, fb.instance.token);
       //navigate('List');
   };
   
   async componentDidMount() {
     const id = this.props.navigation.state.params.id;
-    const article = await fb.instance.showArticle(id);
+    const article = await fb.instance.showArticle(id, fb.instance.token);
     this.setState({author: article.author, category: article.category, image: article.image, text: article.text, title: article.title})
   }
 

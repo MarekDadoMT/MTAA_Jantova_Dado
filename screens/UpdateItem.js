@@ -17,7 +17,7 @@ export default class AddItem extends Component {
 
     _updateArticle = () => {
         const id = this.props.navigation.state.params.id;
-        fb.instance.updateData(id, this.state);
+        fb.instance.updateData(id, this.state, fb.instance.token);
     };
 
     render() {
