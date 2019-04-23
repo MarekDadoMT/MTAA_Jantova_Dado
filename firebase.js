@@ -32,10 +32,10 @@ class fb {
 
 async addToDatabase(url, state, token) {
 
-    var obj = { author: "Marek", category: state.category, image: url,  text: state.textovePole, title: state.title};
+    var obj = { author: "admin", category: state.category, image: url,  text: state.text, title: state.title};
     var myJSON = JSON.stringify(obj);
 
-    console.log(myJSON);
+    //console.log(myJSON);
     
     return fetch(
         `https://us-central1-mtaa-f5627.cloudfunctions.net/addArticle?token=${token}`, {
@@ -71,8 +71,6 @@ async showArticle(id, token) {
 
 async showArticleCategory(category, token) {
 
-    console.log("Firebase " + category);
-
     return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticleCategory?category=${category}&token=${token}`, {
       method: 'GET',
       headers: {
@@ -81,7 +79,6 @@ async showArticleCategory(category, token) {
       },
       }).then((response) => {
           var articles = JSON.parse(response['_bodyText']);
-        console.log(articles);
           return articles;
       })
   }
@@ -95,7 +92,7 @@ async showData(token) {
             },
         }).then((response) => {
             var articles = JSON.parse(response['_bodyText']);
-            console.log(articles);
+            //console.log(articles);
             return articles;
         })
 
@@ -103,7 +100,7 @@ async showData(token) {
 }
 
 async deteleData(id, token) {
-    console.log(id);
+    //console.log(id);
     return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/deleteArticle?key=${id}&token=${token}`, {
         method: 'DELETE',
         headers: {
@@ -112,22 +109,22 @@ async deteleData(id, token) {
         },
     }).then((response) => {
         if(response.status !== 200) {
-            Alert.alert("Article was not DELETED from database", "naser si");
+            //Alert.alert("Article was not DELETED from database", "Try again");
         }
         else {
-            Alert.alert("Success", "Article was DELETED")
+           // Alert.alert("Success", "Article was DELETED")
         }
     });
 }
 
 async updateData(id, state, token) {
 
-    //console.log(state.text);
+    console.log(state.text);
 
     var obj = { text: state.text};
     var myJSON = JSON.stringify(obj);
 
-   // console.log(myJSON);
+   console.log(myJSON);
     
    
     return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/updateArticle?key=${id}&token=${token}`, {
@@ -148,8 +145,8 @@ async updateData(id, state, token) {
     });
 }
 
-async uploadImageAsync(uri) {  
-  
+async uploadImageAsync(uri) {
+
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function() {
@@ -163,20 +160,20 @@ async uploadImageAsync(uri) {
       xhr.open('GET', uri, true);
       xhr.send(null);
     });
-  
+
     const ref = firebase
       .storage()
       .ref()
       .child(uuid.v4());
-    
+
     const snapshot = await ref.put(blob);
 
     blob.close();
-  
+
     return await snapshot.ref.getDownloadURL();
   }
 }
 
-fb.instance = new fb()
+fb.instance = new fb();
 fb.instance.token = '';
 export default fb;

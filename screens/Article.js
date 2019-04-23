@@ -1,5 +1,5 @@
 import React, { Component } from 'react';  
-import { Button, View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {Button, View, Text, TouchableOpacity, StyleSheet, Image, RefreshControl, ScrollView} from 'react-native';
 import fb from '../firebase';
 import UpdateItem from "./UpdateItem";
 
@@ -8,21 +8,27 @@ export default class Article extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      author: '',
-      category: '',
-      image: 'http://www.tiptoncommunications.com/components/com_easyblog/themes/wireframe/images/placeholder-image.png',
-      text: '',
-      title: ''
+        author: '',
+        category: '',
+        image: 'http://www.tiptoncommunications.com/components/com_easyblog/themes/wireframe/images/placeholder-image.png',
+        text: '',
+        title: '',
+        refreshing: false
     };
   }
 
-  deleteArticle = () => {
+  deleteArticle = async () => {
       const id = this.props.navigation.state.params.id;
-      //const { navigate } = this.props.navigation;
-      console.log(id);
-      fb.instance.deteleData(id, fb.instance.token);
-      //navigate('List');
+      await fb.instance.deteleData(id, fb.instance.token);
+      //this.props.navigation.navigate("List");
   };
+
+    _onRefresh = () => {
+        this.setState({refreshing: true});
+        this.componentDidMount().then(() => {
+            this.setState({refreshing: false});
+        });
+    }
   
   async componentDidMount() {
     const id = this.props.navigation.state.params.id;
@@ -33,7 +39,13 @@ export default class Article extends Component {
     render() {
       const id = this.props.navigation.state.params.id;
       return (
-        <View>
+          <ScrollView
+              refreshControl={
+                  <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this._onRefresh}
+                  />
+              }>
 
           <Text style={styles.title}>{this.state.title}</Text>
 
@@ -54,28 +66,34 @@ export default class Article extends Component {
           </View>
 
           <View>
-            <Text style={{color: '#585858', marginLeft: 30, marginTop: 10}} >{this.state.text}</Text>
+              <Text style={{color: '#585858', marginLeft: 30, marginTop: 10}} >{this.state.text}</Text>
           </View>
 
-          <TouchableOpacity style={styles.buttonContainerAdd}
-                            onPress={() => this.props.navigation.navigate("UpdateItem", {
-                              id: id,
-                              title: this.state.title,
-                              author: this.state.author,
-                              category: this.state.category,
-                              text: this.state.text
-                            })}
-            >
-            <Text style={styles.buttonText}>UPDATE ARTICLE</Text>
-          </TouchableOpacity>
+          <View>
+              <TouchableOpacity style={styles.buttonContainerAdd}
+                                onPress={() => this.props.navigation.navigate("UpdateItem", {
+                                  id: id,
+                                  title: this.state.title,
+                                  author: this.state.author,
+                                  category: this.state.category,
+                                  text: this.state.text
+                                })}
+                >
+                <Text style={styles.buttonText}>UPDATE ARTICLE</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.buttonContainerAdd}
-                            onPress={() => this.deleteArticle(this.state.id)}
-          >
-            <Text style={styles.buttonText}>DELETE ARTICLE</Text>
-          </TouchableOpacity>
 
-        </View>
+
+
+              <TouchableOpacity style={styles.buttonContainerAdd}
+                                onPress={() => this.deleteArticle(this.state.id)}
+              >
+                <Text style={styles.buttonText}>DELETE ARTICLE</Text>
+              </TouchableOpacity>
+
+          </View>
+
+          </ScrollView>
       );
     }
   }

@@ -1,11 +1,9 @@
 import React, { Component } from 'react';  
-import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker, ScrollView, Switch} from 'react-native';
+import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker, ScrollView, RefreshControl} from 'react-native';
 import fb from '../firebase';
 import IOSPicker from 'react-native-ios-picker';
 
-
-const data = [{category: 'Football', code: '1'},{category: 'Hockey', code: '2'}]
-const pole = ["Football", "Hockey"];
+const data = [{category: 'No filter', code: '1'},{category: 'Football', code: '2'},{category: 'Hockey', code: '3'}];
 
 export default class List extends Component {
 
@@ -14,49 +12,55 @@ export default class List extends Component {
       super(props);
       this.state = {
         data: [],
-        kategoria: '',
-        switchValue: false
+        selectedValue: '',
+        refreshing: false
 
       };
     }
 
-   componentDidMount() {
-    this.fetchData();
-  }
+    componentDidMount() {
+        this.fetchData();
+    }
 
    async fetchData () {
       const pole = await fb.instance.showData(fb.instance.token).catch((error) => {
           alert(error.message);
       });
       this.setState({data: pole})
-  }
+    }
 
    fetchDataCategory = async (itemValue) => {
-        console.log("ItemValue " + itemValue);
-        await this.setState({kategoria: itemValue})
-        console.log("Ahoj " + this.state.kategoria);
-        const pole =  await fb.instance.showArticleCategory(this.state.kategoria, fb.instance.token).catch((error) => {
-           alert(error.message);
-       });
-       this.setState({data: pole});
-  };
 
-   change(d, i) {
+        if(this.state.selectedValue === "No filter") {
+            const pole =  await fb.instance.showData(fb.instance.token).catch((error) => {
+                alert(error.message);
+            });
+            this.setState({data: pole});
+        }
 
-       this.setState({ marek: data[i].category });
-       console.log(this.state.marek)
+        else {
+            const pole =  await fb.instance.showArticleCategory(this.state.selectedValue, fb.instance.token).catch((error) => {
+                alert(error.message);
+            });
+            this.setState({data: pole});
+        }
+    };
 
-       const pole =  fb.instance.showArticleCategory(this.state.marek).catch((error) => {
-           alert(error.message);
-       });
-       this.setState({data: pole})
+    _onRefresh = () => {
+        this.setState({refreshing: true});
+        this.fetchData().then(() => {
+            this.setState({refreshing: false});
+        });
+    };
 
-       //this.fetchDataCategory();
-  }
+    _change = async (d, i) => {
+        await this.setState({selectedValue: data[i].category});
+        this.fetchDataCategory();
+    }
 
 
-  _keyExtractor = (item, index) => item.id;
-  _flatListSeparator = () => <View style={styles.line} />;
+    _keyExtractor = (item, index) => item.id;
+    _flatListSeparator = () => <View style={styles.line} />;
 
     _renderItem = ({ item }) => {
         return(
@@ -69,59 +73,69 @@ export default class List extends Component {
                 <Text style={styles.heading}>{item.title}</Text>
             </TouchableOpacity>
         )
-    };
+};
 
-  render() {
+    render() {
+        return (
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this._onRefresh}
+                    />
+                }>
 
-    return (
-        <View>
+                <TouchableOpacity style={styles.buttonContainerAdd}
+                                  onPress={() => this.props.navigation.navigate('AddItem')}
+                >
+                    <Text style={styles.buttonText}>ADD ARTICLE</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity style={styles.buttonContainerAdd}
-                              onPress={() => this.props.navigation.navigate('AddItem')}
-            >
-                <Text style={styles.buttonText}>ADD ARTICLE</Text>
-            </TouchableOpacity>
+                <Text style={styles.heading}>Filter by category:</Text>
 
-            <Text style={styles.heading}>Filter by category:</Text>
-
-            {/*<Picker*/}
-            {/*    selectedValue={this.state.kategoria}*/}
-            {/*    keyExtractor={item => item.category}*/}
-            {/*    onValueChange={(itemValue, itemIndex) => this.setState({kategoria: itemValue})}>*/}
-            {/*    {this.fetchDataCategory()}*/}
-            {/*</Picker>*/}
-
-
-
-
-            <View style={{marginBottom: 50,
-                            padding: 30}}>
-              <Picker
-                  selectedValue={this.state.kategoria}
-                  style={{height: 50, width: 200, marginLeft: 90}}
-                  onValueChange={(itemValue, itemIndex) =>
-                      this.fetchDataCategory(itemValue)
-                  }
-
-              >
-                  <Picker.Item key = "Hockey" label="Hockey" value="Hockey" />
-                  <Picker.Item key = "Football" label="Football" value="Football" />
-              </Picker>
-
-            </View>
+                <View style={styles.combobox}>
+                    <IOSPicker
+                        selectedValue={this.state.selectedValue}
+                        onValueChange={(d, i)=> this._change(d, i)}
+                        mode='modal'
+                        textStyle={{color: 'grey'}}
+                    >
+                        {
+                            data.map((item, index)=>
+                                <Picker.Item key={index} label={item.category} value={item.code} />
+                            )
+                        }
+                    </IOSPicker>
+                </View>
 
 
+                {/*<View>*/}
+                {/*  <Picker*/}
+                {/*      selectedValue={this.state.kategoria}*/}
+                {/*      style={{width: 200, marginLeft: 90}}*/}
+                {/*      onValueChange={(itemValue, itemIndex) =>*/}
+                {/*          this.fetchDataCategory(itemValue)*/}
+                {/*      }*/}
+                {/*  >*/}
+                {/*      <Picker.Item key = "No filter" label="No filter" value="No filter" />*/}
+                {/*      <Picker.Item key = "Hockey" label="Hockey" value="Hockey" />*/}
+                {/*      <Picker.Item key = "Football" label="Football" value="Football" />*/}
+                {/*  </Picker>*/}
 
-            <View>
-                <FlatList
-                    data ={this.state.data}
-                    ItemSeparatorComponent={this._flatListSeparator}
-                    renderItem ={this._renderItem}
-                    keyExtractor={this._keyExtractor}
-                />
-            </View>
+                {/*</View>*/}
 
-        </View>
+
+
+                <View>
+                    <FlatList
+                        data ={this.state.data}
+                        ItemSeparatorComponent={this._flatListSeparator}
+                        renderItem ={this._renderItem}
+                        keyExtractor={this._keyExtractor}
+                    />
+                </View>
+
+            </ScrollView>
 
     );
   }

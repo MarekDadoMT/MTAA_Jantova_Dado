@@ -14,11 +14,11 @@ export default class AddItem extends Component {
   constructor(props) {   
     super(props);
     this.state = {
-      author: '',
-      category: '',
-      image: '',
-      text: '',
-      title: ''
+        author: 'WeWant',
+        category: '',
+        title: '',
+        image: '',
+        text: ''
     }
   }
 
@@ -35,18 +35,17 @@ export default class AddItem extends Component {
     }
   };
 
-  _onPress = () => {
-      //const { navigate } = this.props.navigation;
+  _onPress = async () => {
 
-      fb.instance.uploadImageAsync(this.state.image).then((url) => {
-          fb.instance.addToDatabase(url, this.state)
+       await fb.instance.uploadImageAsync(this.state.image).then((url) => {
+           fb.instance.addToDatabase(url, this.state, fb.instance.token)
       }).catch(error => {
           console.log('Something is wrong')
-      })
+      });
 
-      //navigate("List");
+      this.props.navigation.navigate("List");
 
-  }
+  };
 
   render() {
     return (
@@ -76,7 +75,7 @@ export default class AddItem extends Component {
         <TextInput style={styles.inputText}
                       multiline = {true} 
                       blurOnSubmit = {true}
-                      onChangeText={(text) => this.setState({textovePole: text})}
+                      onChangeText={(text) => this.setState({text: text})}
         />
         
         <TouchableOpacity

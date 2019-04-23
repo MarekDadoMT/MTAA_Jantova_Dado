@@ -19,6 +19,8 @@ exports.addArticle = functions.https.onRequest((req, res) => {
         var image = req.body.image;
         var text = req.body.text;
 
+        console.log("Token firebase: " + token);
+
         if(author && category && title && image && text && token) {
 
             return admin.database().ref('users').orderByChild('token').equalTo(token).once('value', function(snapshot) {
@@ -188,11 +190,14 @@ exports.getArticleCategory = functions.https.onRequest((req, res) => {
                             snapshot.forEach(function(childSnapshot) {
 
                                 var key = childSnapshot.key;
+                                var childSnapshotBody = childSnapshot.val();
+                                childSnapshotBody["id"] = key;
 
-                                articles.push({
-                                    [key]: childSnapshot
-                                });
+                                articles.push(
+                                    childSnapshotBody
+                                );
                             });
+
                             res.status(200).send(articles);
 
                         }
@@ -213,7 +218,7 @@ exports.updateArticle = functions.https.onRequest((req, res) => {
     
     if(req.method === 'PUT') {
 
-        var token = req.query.key
+        var token = req.query.token;
         var key = req.query.key;
 
         if(key && token) {

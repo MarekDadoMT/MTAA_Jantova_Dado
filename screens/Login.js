@@ -1,32 +1,44 @@
-import { View, Text, TextInput, TouchableOpacity,StyleSheet} from 'react-native';
+import { Alert, View, Text, TextInput, TouchableOpacity,StyleSheet} from 'react-native';
 import React, { Component } from 'react';
 import fb from '../firebase';
 
 export default class Login extends Component {
-    render() {
 
-        var username = '';
-        var password = '';
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: '',
+            password: ''
+        };
+    }
+
+    _login = async () => {
+         await fb.instance.login(this.state.username, this.state.password).then(tok => {
+            fb.instance.token = tok;
+             //console.log(fb.instance.token);
+                 this.props.navigation.navigate('List');
+        })
+
+    };
+
+    render() {
 
       return (
         <View style = {styles.container}>
             <TextInput style = {styles.input} 
                autoCapitalize="none" 
-               onChangeText = {(text_user) => username = text_user}
+               onChangeText = {(text_user) => this.setState({username: text_user})}
                autoCorrect={false}
                placeholder='Username' 
                placeholderTextColor='grey'/>
             <TextInput style = {styles.input}
-                       onChangeText = {(passwd_user) => password = passwd_user}
+                       onChangeText = {(passwd_user) => this.setState({password: passwd_user})}
               placeholder='Password' 
               placeholderTextColor='grey' 
               secureTextEntry/>
 
             <TouchableOpacity style={styles.buttonContainer}
-                     onPress={() => fb.instance.login(password.toString(), username.toString()).then(tok => {
-                         fb.instance.token = tok
-                         this.props.navigation.navigate('List');
-                     })}
+                     onPress={this._login}
             >
                     <Text style={styles.buttonText}>LOGIN</Text>
             </TouchableOpacity> 

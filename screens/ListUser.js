@@ -1,5 +1,5 @@
 import React, { Component } from 'react';  
-import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker} from 'react-native';
+import { Button, View, Text , FlatList, Image, StyleSheet, TouchableOpacity, Picker, ScrollView} from 'react-native';
 import fb from '../firebase';
 import IOSPicker from 'react-native-ios-picker';
 
@@ -33,8 +33,8 @@ export default class List extends Component {
     this.setState({data: pole})
   }
 
-  change(d, i) {
-    this.setState({selectedValue: data[i].category});
+  change = async (d, i) => {
+    await this.setState({selectedValue: data[i].category});
     this.fetchDataCategory();
   }
 
@@ -56,23 +56,23 @@ export default class List extends Component {
 
   render() {
     return (
-        <View>
+        <ScrollView>
 
           <Text style={styles.heading}>Filter by category:</Text>
           
           <View style={styles.combobox}>
-          <IOSPicker 
-          selectedValue={this.state.selectedValue}
-          onValueChange={(d, i)=> this.change(d, i)}
-          mode='modal'
-          textStyle={{color: 'grey'}}
-          >
-          { 
-            data.map((item, index)=>
-              <Picker.Item key={index} label={item.category} value={item.code} />
-            )
-          }
-          </IOSPicker>
+            <IOSPicker
+              selectedValue={this.state.selectedValue}
+              onValueChange={(d, i)=> this.change(d, i)}
+              mode='modal'
+              textStyle={{color: 'grey'}}
+              >
+              {
+                data.map((item, index)=>
+                  <Picker.Item key={index} label={item.category} value={item.code} />
+                )
+              }
+            </IOSPicker>
           </View>
 
           <View>
@@ -84,7 +84,7 @@ export default class List extends Component {
               />
           </View>      
             
-        </View>
+        </ScrollView>
 
     );
   }
