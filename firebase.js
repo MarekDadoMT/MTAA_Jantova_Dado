@@ -71,7 +71,7 @@ async showArticle(id, token) {
 
 async showArticleCategory(category, token) {
 
-        console.log("Firebase " + category);
+    console.log("Firebase " + category);
 
     return fetch(`https://us-central1-mtaa-f5627.cloudfunctions.net/getArticleCategory?category=${category}&token=${token}`, {
       method: 'GET',
@@ -81,6 +81,7 @@ async showArticleCategory(category, token) {
       },
       }).then((response) => {
           var articles = JSON.parse(response['_bodyText']);
+        console.log(articles);
           return articles;
       })
   }
@@ -94,6 +95,7 @@ async showData(token) {
             },
         }).then((response) => {
             var articles = JSON.parse(response['_bodyText']);
+            console.log(articles);
             return articles;
         })
 
