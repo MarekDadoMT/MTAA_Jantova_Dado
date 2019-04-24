@@ -149,9 +149,9 @@ const styles = StyleSheet.create({
     marginRight: 30,
     backgroundColor: 'grey',
     borderColor: '#d6d7da',
-    borderRadius: 20,
+    //borderRadius: 20,
     borderWidth: 0.5,
-    overflow: 'hidden'
+    //overflow: 'hidden'
     //color: 'grey'
   },
   heading: {

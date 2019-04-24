@@ -1,9 +1,24 @@
 import React, { Component } from 'react';  
-import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, StyleSheet, View, Button, Alert, Image } from 'react-native';
+import {
+    KeyboardAvoidingView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    View,
+    Button,
+    Alert,
+    Image,
+    Picker
+} from 'react-native';
 import { Permissions, ImagePicker } from 'expo';
 import getPermission from '../utils/permissions'
 
 import fb from '../firebase';
+
+import IOSPicker from 'react-native-ios-picker';
+
+const data = [{category: 'Football', code: '1'},{category: 'Hockey', code: '2'}];
 
 export default class AddItem extends Component { 
   
@@ -18,7 +33,8 @@ export default class AddItem extends Component {
         category: '',
         title: '',
         image: '',
-        text: ''
+        text: '',
+        selectedValue: ''
     }
   }
 
@@ -38,14 +54,19 @@ export default class AddItem extends Component {
   _onPress = async () => {
 
        await fb.instance.uploadImageAsync(this.state.image).then((url) => {
-           fb.instance.addToDatabase(url, this.state, fb.instance.token)
+           fb.instance.addToDatabase(url, this.state, fb.instance.token, fb.instance.author)
       }).catch(error => {
           console.log('Something is wrong')
       });
 
-      this.props.navigation.navigate("List");
+      //this.props.navigation.navigate("List");
 
   };
+
+    _change = async (d, i) => {
+        await this.setState({category: data[i].category});
+        //this.fetchDataCategory();
+    }
 
   render() {
     return (
@@ -58,10 +79,26 @@ export default class AddItem extends Component {
                   onChangeText={(text) => this.setState({title: text})}
         />
 
-        <Text style={styles.heading}>Category</Text> 
-        <TextInput style={styles.input}
-                  onChangeText={(text) => this.setState({category: text})}
-        />
+          <Text style={styles.heading}>Category</Text>
+          <View style={styles.combobox}>
+              <IOSPicker
+                  selectedValue={this.state.category}
+                  onValueChange={(d, i)=> this._change(d, i)}
+                  mode='modal'
+                  textStyle={{color: 'grey'}}
+              >
+                  {
+                      data.map((item, index)=>
+                          <Picker.Item key={index} label={item.category} value={item.code} />
+                      )
+                  }
+              </IOSPicker>
+          </View>
+
+        {/*<Text style={styles.heading}>Category</Text> */}
+        {/*<TextInput style={styles.input}*/}
+        {/*          onChangeText={(text) => this.setState({category: text})}*/}
+        {/*/>*/}
         
         <Text style={styles.heading}>Image</Text> 
         <TouchableOpacity
@@ -90,6 +127,15 @@ export default class AddItem extends Component {
 }
 
   const styles = StyleSheet.create({
+      combobox: {
+          marginLeft: 30,
+          marginRight: 30,
+          marginBottom: 10,
+          backgroundColor: 'grey',
+          borderColor: '#d6d7da',
+          borderWidth: 0.5,
+
+      },
     title: {
       margin: 40,
       fontSize: 20,

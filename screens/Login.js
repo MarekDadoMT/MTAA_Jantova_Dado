@@ -14,9 +14,13 @@ export default class Login extends Component {
 
     _login = async () => {
          await fb.instance.login(this.state.username, this.state.password).then(tok => {
-            fb.instance.token = tok;
-             //console.log(fb.instance.token);
+
+             if(tok != null) {
+                 fb.instance.token = tok;
+                 fb.instance.author = this.state.username;
+                 //console.log(fb.instance.token);
                  this.props.navigation.navigate('List');
+             }
         })
 
     };

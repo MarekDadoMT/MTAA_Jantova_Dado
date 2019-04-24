@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import * as firebase from 'firebase';
 import { Alert } from 'react-native';
+import { sha256 } from 'react-native-sha256';
 
 // Zdroj: https://blog.jscrambler.com/create-a-react-native-image-recognition-app-with-google-vision-api/
 
@@ -21,7 +22,7 @@ class fb {
         }).then((response) => {
 
             if(response.status !== 200) {
-                Alert.alert("Wrong username or password..");
+                Alert.alert("Wrong username or password...");
             }
             else {
                 let token = response['_bodyText'];
@@ -30,12 +31,13 @@ class fb {
         })
     }
 
-async addToDatabase(url, state, token) {
+async addToDatabase(url, state, token, author) {
 
-    var obj = { author: "admin", category: state.category, image: url,  text: state.text, title: state.title};
+
+    var obj = { author: author, category: state.category, image: url,  text: state.text, title: state.title};
     var myJSON = JSON.stringify(obj);
 
-    //console.log(myJSON);
+    console.log(myJSON);
     
     return fetch(
         `https://us-central1-mtaa-f5627.cloudfunctions.net/addArticle?token=${token}`, {
@@ -176,4 +178,5 @@ async uploadImageAsync(uri) {
 
 fb.instance = new fb();
 fb.instance.token = '';
+fb.instance.author = '';
 export default fb;

@@ -49,13 +49,18 @@ export default class Article extends Component {
 
           <Text style={styles.title}>{this.state.title}</Text>
 
-          <View>
+          <View style={{
+              justifyContent: 'center',
+              alignItems: 'center'}}>
             <Image source={{ uri: this.state.image }}
-                   style={{ width: '100%', height: '50%'}}
+                   style={{ width: 250,
+                       height: 300
+                   }}
             />
           </View>
 
-          <View style={{flexDirection: 'row'}}>
+          <View style={{flexDirection: 'row',
+                        marginTop: 30}}>
             <Text style={styles.heading}>Author: </Text>
             <Text style={{color: '#585858'}}>{this.state.author}</Text>
           </View>
